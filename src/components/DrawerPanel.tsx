@@ -10,10 +10,16 @@ import ESGTab from './tabs/ESGTab';
 interface DrawerPanelProps {
   isOpen: boolean;
   onClose: () => void;
+  activeTab?: string;
+  setActiveTab?: (tab: string) => void;
 }
 
-export default function DrawerPanel({ isOpen, onClose }: DrawerPanelProps) {
-  const [activeTab, setActiveTab] = useState('overview');
+export default function DrawerPanel({ isOpen, onClose, activeTab: externalActiveTab, setActiveTab: externalSetActiveTab }: DrawerPanelProps) {
+  const [internalActiveTab, setInternalActiveTab] = useState('overview');
+  
+  // 使用外部传入的 activeTab 和 setActiveTab，如果没有则使用内部状态
+  const activeTab = externalActiveTab ?? internalActiveTab;
+  const setActiveTab = externalSetActiveTab ?? setInternalActiveTab;
 
   const tabs = [
     { id: 'overview', name: '概覽', icon: '📊', component: OverviewTab },
@@ -57,10 +63,10 @@ export default function DrawerPanel({ isOpen, onClose }: DrawerPanelProps) {
             <h2 className="text-lg font-semibold text-white">控制面板</h2>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-gray-700/50 rounded-lg transition-colors lg:hidden"
+              className="p-3 hover:bg-gray-700 hover:bg-opacity-80 rounded-full transition-all duration-200 ease-in-out transform hover:scale-110 lg:hidden"
               aria-label="關閉面板"
             >
-              <ChevronRight className="w-5 h-5 text-gray-300" />
+              <ChevronRight size={24} className="text-gray-300" />
             </button>
           </div>
           

@@ -12,9 +12,10 @@ import MemoryManagementTestPanel from '../components/MemoryManagementTestPanel';
 import { useLoadingStore } from '../store/loadingStore';
 import { useFeedbackStore } from '../stores/feedbackStore';
 import { useTimerManager } from '../hooks/useCleanup';
+import { useMapStore } from '../store/mapStore';
 
 export default function Home() {
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const { uiState, setDrawerOpen, setDrawerActiveTab } = useMapStore();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [mapReady, setMapReady] = useState(false);
   const [showPerformancePanel, setShowPerformancePanel] = useState(false);
@@ -48,31 +49,35 @@ export default function Home() {
   };
   
   const handleMapReady = (map: any) => {
-    console.log('地图已准备就绪:', map);
+    console.log('Home: 地图已准备就绪:', map);
     setMapReady(true);
     showFeedback('地图加载完成', 'success');
   };
 
+  console.log('Home: 组件渲染，mapReady:', mapReady);
+
   return (
     <div className="h-screen bg-gray-900 text-white relative overflow-hidden">
       {/* 全屏地图容器 */}
-      <FadeTransition isVisible={true} duration={0.5} className="absolute inset-0">
+      <div className="absolute inset-0">
         <MapboxMap onMapReady={handleMapReady} />
-      </FadeTransition>
+      </div>
 
       {/* 顶部导航栏 */}
       <FadeTransition isVisible={true} duration={0.3} delay={0.2} direction="down">
         <TopBar 
-          onMenuClick={() => setDrawerOpen(!drawerOpen)}
+          onMenuClick={() => setDrawerOpen(!uiState.drawerOpen)}
           onSettingsClick={() => setSettingsOpen(true)}
-          isDrawerOpen={drawerOpen}
+          isDrawerOpen={uiState.drawerOpen}
         />
       </FadeTransition>
 
       {/* 右侧抽屉面板 */}
       <DrawerPanel 
-        isOpen={drawerOpen}
+        isOpen={uiState.drawerOpen}
         onClose={() => setDrawerOpen(false)}
+        activeTab={uiState.drawerActiveTab}
+        setActiveTab={setDrawerActiveTab}
       />
 
       {/* 底部状态栏和跑马灯 */}

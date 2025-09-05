@@ -45,10 +45,39 @@ const MapPopup: React.FC<MapPopupProps> = ({ data, layerType, position, onClose 
           {getPopupTitle(layerType)}
         </h3>
         <button
+          style={{
+            position: 'absolute',
+            top: '-12px',
+            right: '-12px',
+            width: '48px',
+            height: '48px',
+            backgroundColor: '#ffffff',
+            border: '2px solid #374151',
+            borderRadius: '50%',
+            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            zIndex: 10,
+            transition: 'all 0.2s ease-in-out'
+          }}
           onClick={onClose}
-          className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+          aria-label="关闭弹窗"
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'scale(1.1)';
+            e.currentTarget.style.backgroundColor = '#f9fafb';
+            e.currentTarget.style.borderColor = '#1f2937';
+            e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'scale(1)';
+            e.currentTarget.style.backgroundColor = '#ffffff';
+            e.currentTarget.style.borderColor = '#374151';
+            e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1)';
+          }}
         >
-          <X size={16} />
+          <X size={24} style={{ color: '#1f2937', fontWeight: 'bold' }} />
         </button>
       </div>
       <div className="p-3">

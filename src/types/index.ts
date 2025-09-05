@@ -103,8 +103,9 @@ export interface SensorData {
   id: string;
   type: '电表' | '水表' | '烟感' | '门禁';
   location: [number, number]; // [lng, lat]
-  status: '红' | '橙' | '绿';
+  status: '红' | '橙' | '绿' | 'online' | 'offline';
   value: number;
+  unit: string;
   lastUpdate: Date;
 }
 
@@ -113,9 +114,13 @@ export interface CCTVCamera {
   id: string;
   name: string;
   location: [number, number];
-  status: '红' | '橙' | '绿';
+  status: '红' | '橙' | '绿' | 'online' | 'offline';
   snapshotUrl: string;
   isRecording: boolean;
+  resolution: string;
+  viewAngle: number;
+  nightVision: boolean;
+  lastUpdate: Date;
 }
 
 // 人流数据模型
@@ -126,6 +131,9 @@ export interface FlowData {
   progress: number; // 0-1
   speed: number;
   destination: 'MTR' | 'Taxi' | 'Runway';
+  density: number;
+  direction: number;
+  type: string;
 }
 
 // IAQ空气质量数据
@@ -138,6 +146,9 @@ export interface IAQData {
   temperature: number;
   humidity: number;
   status: '红' | '橙' | '绿';
+  aqi: number;
+  level: string;
+  lastUpdate: Date;
 }
 
 // 垃圾桶数据
@@ -146,8 +157,10 @@ export interface BinData {
   location: [number, number];
   type: '一般垃圾' | '回收' | '厨余';
   fillLevel: number; // 0-100
-  status: '红' | '橙' | '绿';
+  status: '红' | '橙' | '绿' | 'normal' | 'full' | '故障';
   lastCollection: Date;
+  temperature: number;
+  lastUpdate: Date;
 }
 
 // 内涝风险数据

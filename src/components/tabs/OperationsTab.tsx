@@ -124,6 +124,20 @@ export default function OperationsTab() {
     }
   }, [startRealtime, isSimulationRunning]);
 
+  // 图层ID映射：OperationsTab中的简化ID -> LayerManager中的实际图层ID
+  const layerIdMapping: { [key: string]: string } = {
+    'sensors': 'sensors-layer',
+    'cctv': 'cctv-layer', 
+    'heatmap': 'heat-layer',
+    'shuttle': 'bus-layer',
+    'concert': 'flow-layer',
+    'runway': 'fence-layer',
+    'iaq': 'iaq-layer',
+    'bins': 'bins-layer',
+    'flood': 'flood-layer',
+    'patrol': 'patrol-layer'
+  };
+
   // 切换图层可见性
   const toggleLayerVisibility = (layerId: string) => {
     setLayerVisibility(prev => {
@@ -132,12 +146,15 @@ export default function OperationsTab() {
         [layerId]: !prev[layerId as keyof typeof prev]
       };
       
+      // 获取实际的图层ID
+      const actualLayerId = layerIdMapping[layerId] || layerId;
+      
       // 调用地图的图层切换方法
       if (mapRef.current && typeof mapRef.current.toggleLayer === 'function') {
         try {
-          mapRef.current.toggleLayer(layerId, newVisibility[layerId as keyof typeof newVisibility]);
+          mapRef.current.toggleLayer(actualLayerId, newVisibility[layerId as keyof typeof newVisibility]);
         } catch (error) {
-          console.warn('Failed to toggle layer visibility:', error);
+          console.warn(`Failed to toggle layer visibility for ${layerId} (${actualLayerId}):`, error);
         }
       }
       

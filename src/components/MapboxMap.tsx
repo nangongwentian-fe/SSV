@@ -50,6 +50,16 @@ interface MapboxMapProps {
 }
 
 const MapboxMap: React.FC<MapboxMapProps> = ({ onMapReady }) => {
+  console.log('=== MapboxMap: 组件开始渲染 ===');
+  console.log('MapboxMap: onMapReady prop:', typeof onMapReady);
+  
+  // 添加一个简单的测试日志
+  useEffect(() => {
+    console.log('MapboxMap: useEffect 被调用，开始地图初始化流程');
+    return () => {
+      console.log('MapboxMap: useEffect 清理函数被调用');
+    };
+  }, []);
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const layerManager = useRef<LayerManager | null>(null);
@@ -62,7 +72,15 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ onMapReady }) => {
     position: { x: number; y: number };
   } | null>(null);
   const isCleaningUpRef = useRef(false);
-  const { mapboxToken, tilesUrl } = useMapStore();
+  console.log('MapboxMap: isCleaningUpRef 初始化为:', isCleaningUpRef.current);
+  
+  // 确保在组件重新挂载时重置清理状态
+  useEffect(() => {
+    isCleaningUpRef.current = false;
+    console.log('MapboxMap: 重置 isCleaningUpRef 为 false');
+  }, []);
+  const { mapState } = useMapStore();
+  const { mapboxToken, tilesUrl } = mapState;
   const { setLoading, isLoading } = useLoading();
   
   // 使用清理Hook
@@ -87,23 +105,44 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ onMapReady }) => {
       try {
         setLoading(LOADING_KEYS.MAP_INIT, true);
         
+        // 等待容器元素渲染完成
+        let retryCount = 0;
+        const maxRetries = 10;
+        
+        while (!mapContainer.current && retryCount < maxRetries) {
+          console.log(`MapboxMap: 等待容器元素渲染，重试 ${retryCount + 1}/${maxRetries}`);
+          await new Promise(resolve => setTimeout(resolve, 100));
+          retryCount++;
+        }
+        
+        // 确保容器元素存在
+        if (!mapContainer.current) {
+          console.error('MapboxMap: 地图容器元素不存在，已重试', maxRetries, '次');
+          setLoading(LOADING_KEYS.MAP_INIT, false);
+          toast.error('地图容器初始化失败');
+          return;
+        }
+        
         // 获取Token
         const token = mapboxToken || BUILTIN_TOKEN;
         
         mapboxgl.accessToken = token;
 
         // 尝试使用Mapbox样式
-        let mapStyle: string | any = 'mapbox://styles/mapbox/standard';
+        let mapStyle: string | any = 'mapbox://styles/mapbox/streets-v12';
         let useMapbox = true;
 
         // 测试token是否有效
+        console.log('MapboxMap: 验证 Mapbox token:', token.substring(0, 20) + '...');
         try {
           const testResponse = await fetch(`https://api.mapbox.com/styles/v1/mapbox/standard?access_token=${token}`);
+          console.log('MapboxMap: Token验证响应状态:', testResponse.status);
           if (!testResponse.ok) {
             throw new Error('Mapbox token invalid');
           }
+          console.log('MapboxMap: Token验证成功，使用Mapbox样式');
         } catch (err) {
-          console.warn('Mapbox token无效，切换到OpenStreetMap:', err);
+          console.warn('MapboxMap: Mapbox token无效，切换到OpenStreetMap:', err);
           handleError(err as Error, ErrorType.NETWORK, ErrorSeverity.MEDIUM, {
             component: 'MapboxMap',
             action: 'token_validation'
@@ -114,8 +153,11 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ onMapReady }) => {
         }
 
         // 初始化地图
+        console.log('MapboxMap: 开始初始化地图');
+        console.log('MapboxMap: 创建 Mapbox 地图实例');
+        console.log('MapboxMap: 容器元素:', mapContainer.current);
         map.current = new mapboxgl.Map({
-          container: mapContainer.current!,
+          container: mapContainer.current,
           style: mapStyle,
           center: [114.2094, 22.3193], // 启德体育园
           zoom: 14.8,
@@ -124,6 +166,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ onMapReady }) => {
           projection: useMapbox ? 'globe' as any : undefined,
           antialias: true
         });
+        console.log('MapboxMap: 地图实例创建成功');
 
         // 添加控件
         map.current.addControl(new mapboxgl.NavigationControl());
@@ -136,24 +179,31 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ onMapReady }) => {
         // 注册事件监听器的辅助函数
         const addMapEventListener = (event: string, handler: Function) => {
           if (map.current && !isCleaningUpRef.current) {
-            registerEventListener(map.current, event, handler as any);
+            registerEventListener(map.current as any, event, handler as any);
           }
         };
 
         // 地图加载完成事件
         const styleLoadHandler = () => {
-          if (!map.current || isCleaningUpRef.current) return;
+          console.log('MapboxMap: styleLoadHandler 被调用');
+          if (!map.current || isCleaningUpRef.current) {
+            console.error('MapboxMap: styleLoadHandler 中 map.current 为空或正在清理');
+            return;
+          }
 
           try {
+            console.log('MapboxMap: 设置样式加载完成状态');
             setLoading(LOADING_KEYS.STYLE_LOAD, true);
             
             // 只有使用Mapbox时才添加3D效果
             if (useMapbox) {
               try {
                 // 添加雾效
+                console.log('MapboxMap: 添加雾效');
                 map.current.setFog({});
 
                 // 添加地形
+                console.log('MapboxMap: 添加地形');
                 map.current.addSource('mapbox-dem', {
                   type: 'raster-dem',
                   url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
@@ -170,7 +220,9 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ onMapReady }) => {
             }
 
             // 初始化图层管理器和动画引擎
+            console.log('MapboxMap: 准备调用 initializeManagers');
             initializeManagers();
+            console.log('MapboxMap: initializeManagers 调用完成');
 
             // 添加地标
             addLandmarks();
@@ -197,7 +249,64 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ onMapReady }) => {
             toast.error('地图样式加载失败');
           }
         };
+        console.log('MapboxMap: 注册 style.load 事件监听器');
         addMapEventListener('style.load', styleLoadHandler);
+        
+        // 添加其他地图事件监听器用于调试
+        addMapEventListener('load', () => {
+          console.log('MapboxMap: load 事件被触发');
+        });
+        
+        addMapEventListener('idle', () => {
+          console.log('MapboxMap: idle 事件被触发');
+        });
+        
+        addMapEventListener('sourcedata', (e: any) => {
+          if (e.sourceDataType === 'metadata') {
+            console.log('MapboxMap: sourcedata metadata 事件被触发');
+          }
+        });
+        
+        // 添加超时机制，如果10秒内样式没有加载完成，手动触发初始化
+        const styleLoadTimeout = setTimeout(() => {
+          console.warn('MapboxMap: 样式加载超时，手动触发初始化');
+          console.log('MapboxMap: 检查条件 - map.current:', !!map.current, 'isCleaningUpRef.current:', isCleaningUpRef.current, 'isLoaded:', isLoaded);
+          if (map.current && !isCleaningUpRef.current && !isLoaded) {
+            console.log('MapboxMap: 开始手动初始化流程');
+            try {
+              // 使用统一的初始化流程，避免重复添加数据源
+              console.log('MapboxMap: 调用 initializeManagers (超时回调)');
+              initializeManagers();
+              
+              console.log('MapboxMap: 添加地标');
+              addLandmarks();
+              
+              setIsLoaded(true);
+              setLoading(LOADING_KEYS.STYLE_LOAD, false);
+              setLoading(LOADING_KEYS.MAP_INIT, false);
+              
+              // 通知父组件地图已准备就绪
+              if (onMapReady && map.current) {
+                onMapReady(map.current);
+              }
+              
+              console.log('MapboxMap: 手动初始化完成');
+              toast.success('地图加载完成');
+            } catch (err) {
+              console.error('MapboxMap: 手动初始化失败:', err);
+              setLoading(LOADING_KEYS.STYLE_LOAD, false);
+              setLoading(LOADING_KEYS.MAP_INIT, false);
+              toast.error('地图初始化失败');
+            }
+          } else {
+            console.log('MapboxMap: 跳过手动初始化 - 条件不满足');
+          }
+        }, 10000);
+        
+        // 注册超时清理
+        registerCleanup(() => {
+          clearTimeout(styleLoadTimeout);
+        });
 
         // 错误处理
         const errorHandler = (e: any) => {
@@ -236,12 +345,23 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ onMapReady }) => {
       }
     };
 
-    // 调用初始化函数
-    initializeMap();
+    // 使用 requestAnimationFrame 确保 DOM 已经渲染
+    let timeoutId: NodeJS.Timeout | null = null;
+    const rafId = requestAnimationFrame(() => {
+      // 再次确保在下一个渲染周期执行
+      timeoutId = setTimeout(() => {
+        initializeMap();
+      }, 0);
+    });
     
     // 注册额外的清理逻辑
-    registerCleanup(() => {
-      isCleaningUpRef.current = true;
+        registerCleanup(() => {
+          console.log('MapboxMap: registerCleanup 回调被执行，设置 isCleaningUpRef.current = true');
+          cancelAnimationFrame(rafId);
+          if (timeoutId) {
+            clearTimeout(timeoutId);
+          }
+          isCleaningUpRef.current = true;
       
       try {
         console.log('开始清理MapboxMap组件资源...');
@@ -307,47 +427,44 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ onMapReady }) => {
       const cleanupStats = getCleanupStats();
       console.debug('MapboxMap清理统计:', cleanupStats);
     }
-  }, [mapboxToken, onMapReady]);
+  }, [onMapReady]);
 
   // 初始化管理器
   const initializeManagers = () => {
-    if (!map.current) return;
+    console.log('MapboxMap: initializeManagers 开始执行');
+    if (!map.current) {
+      console.error('MapboxMap: map.current 为空，无法初始化管理器');
+      return;
+    }
 
     try {
       setLoading(LOADING_KEYS.LAYERS, true);
       
       // 初始化图层管理器
+      console.log('MapboxMap: 创建 LayerManager 实例');
       layerManager.current = new LayerManager(map.current);
+      
+      console.log('MapboxMap: 调用 initializeDataSources');
       layerManager.current.initializeDataSources();
+      
+      console.log('MapboxMap: 调用 initializeLayers');
       layerManager.current.initializeLayers();
 
-      // 初始化动画引擎
-      animationEngine.current = new AnimationEngine();
-      animationEngine.current.start();
-      
-      // 将实例设置到状态管理中
-      const { setAnimationEngine, setLayerManager, initializeAnimationSystems, initializeScenarioSystems } = useMapStore.getState();
-      setAnimationEngine(animationEngine.current);
+      // 将LayerManager设置到状态管理中
+      const { setLayerManager, initializeAnimationSystems, initializeScenarioSystems } = useMapStore.getState();
       setLayerManager(layerManager.current);
+      
+      // 初始化动画系统（这会创建AnimationEngine和相关系统）
       initializeAnimationSystems();
+      
+      // 获取创建的动画引擎实例
+      const { animationEngine: storeAnimationEngine } = useMapStore.getState();
+      animationEngine.current = storeAnimationEngine;
       
       // 初始化场景和天气系统
       initializeScenarioSystems();
 
-      // 设置图层点击事件
-      layerManager.current.setLayerClickHandler((data, layerType, event) => {
-        const rect = mapContainer.current?.getBoundingClientRect();
-        if (rect) {
-          setPopup({
-            data,
-            layerType,
-            position: {
-              x: event.point.x,
-              y: event.point.y
-            }
-          });
-        }
-      });
+      // 图层点击事件已在LayerManager内部处理
       
       setLoading(LOADING_KEYS.LAYERS, false);
     } catch (err) {
@@ -406,9 +523,9 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ onMapReady }) => {
             layerManager.current.toggleLayerVisibility(layerId);
           }
         },
-        updateLayerData: (layerId: string) => {
+        updateLayerData: (layerId: string, data: any) => {
           if (layerManager.current && !isCleaningUpRef.current) {
-            layerManager.current.updateLayerData(layerId);
+            layerManager.current.updateLayerData(layerId, data);
           }
         },
         getLayerManager: () => layerManager.current,
@@ -441,20 +558,26 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ onMapReady }) => {
 
   return (
     <div className="relative w-full h-full">
-      <LoadingWrapper
-        isLoading={isLoading(LOADING_KEYS.MAP_INIT) || isLoading(LOADING_KEYS.STYLE_LOAD)}
-        loadingText="地图初始化中..."
-        className="w-full h-full"
-      >
-        <div 
-          ref={mapContainer} 
-          className="w-full h-full" 
-          style={{ minHeight: '400px' }}
-        />
-      </LoadingWrapper>
+      {/* 地图容器始终渲染，不受加载状态影响 */}
+      <div 
+        ref={mapContainer} 
+        className="w-full h-full" 
+        style={{ minHeight: '400px' }}
+      />
       
+      {/* 地图初始化加载遮罩 */}
+      {(isLoading(LOADING_KEYS.MAP_INIT) || isLoading(LOADING_KEYS.STYLE_LOAD)) && (
+        <div className="absolute inset-0 bg-white/90 backdrop-blur-sm flex items-center justify-center z-10">
+          <div className="flex flex-col items-center space-y-3">
+            <div className="animate-spin rounded-full h-8 w-8 border-4 border-blue-500 border-t-transparent"></div>
+            <span className="text-lg text-gray-700">地图加载中...</span>
+          </div>
+        </div>
+      )}
+      
+      {/* 图层加载指示器 */}
       {isLoading(LOADING_KEYS.LAYERS) && (
-        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg">
+        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg z-20">
           <div className="flex items-center space-x-2">
             <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent"></div>
             <span className="text-sm text-gray-700">图层加载中...</span>

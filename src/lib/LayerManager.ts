@@ -70,7 +70,7 @@ export class LayerManager {
     
     // 注册到性能优化器
     // 初始化性能监控
-    console.log('LayerManager initialized');
+    console.log('LayerManager: 构造函数完成，实例已创建');
   }
 
   // 验证地图实例
@@ -91,6 +91,8 @@ export class LayerManager {
     }
 
     try {
+      console.log('LayerManager: 开始初始化数据源...');
+      
       const sources = {
         'sensors-src': this.generateSensorsData(),
         'cctv-src': this.generateCCTVData(),
@@ -104,6 +106,8 @@ export class LayerManager {
         'fence-src': this.generateFenceData()
       };
 
+      console.log('LayerManager: 准备添加', Object.keys(sources).length, '个数据源');
+      
       let successCount = 0;
       Object.entries(sources).forEach(([id, data]) => {
         try {
@@ -113,10 +117,13 @@ export class LayerManager {
               data: data
             });
             this.dataSources.set(id, data);
+            console.log(`LayerManager: 成功添加数据源 ${id}`);
             successCount++;
+          } else {
+            console.log(`LayerManager: 数据源 ${id} 已存在，跳过`);
           }
         } catch (err) {
-          console.error(`添加数据源 ${id} 失败:`, err);
+          console.error(`LayerManager: 添加数据源 ${id} 失败:`, err);
           handleError(err as Error, ErrorType.CLIENT, ErrorSeverity.MEDIUM, {
             component: 'LayerManager',
             action: 'add_data_source',
@@ -128,9 +135,9 @@ export class LayerManager {
       this.performanceStats.sourcesLoaded = successCount;
       this.performanceStats.lastUpdateTime = Date.now();
       
-      console.log(`数据源初始化完成: ${successCount}/${Object.keys(sources).length}`);
+      console.log(`LayerManager: 数据源初始化完成: ${successCount}/${Object.keys(sources).length}`);
     } catch (err) {
-      console.error('数据源初始化失败:', err);
+      console.error('LayerManager: 数据源初始化失败:', err);
       handleError(err as Error, ErrorType.CLIENT, ErrorSeverity.HIGH, {
         component: 'LayerManager',
         action: 'initialize_data_sources'
@@ -147,11 +154,14 @@ export class LayerManager {
     }
 
     try {
+      console.log('LayerManager: 开始初始化图层...');
       let successCount = 0;
       const layerConfigs = this.getLayerConfigurations();
+      console.log('LayerManager: 准备添加', layerConfigs.length, '个图层');
       
       layerConfigs.forEach(config => {
         if (this.addLayer(config)) {
+          console.log(`LayerManager: 成功添加图层 ${config.id}`);
           successCount++;
         }
       });
@@ -159,12 +169,13 @@ export class LayerManager {
       this.performanceStats.layersLoaded = successCount;
       this.performanceStats.lastUpdateTime = Date.now();
       
-      console.log(`图层初始化完成: ${successCount}/${layerConfigs.length}`);
+      console.log(`LayerManager: 图层初始化完成: ${successCount}/${layerConfigs.length}`);
       
       // 添加点击事件处理
       this.setupClickHandlers();
+      console.log('LayerManager: 点击事件处理器设置完成');
     } catch (err) {
-      console.error('图层初始化失败:', err);
+      console.error('LayerManager: 图层初始化失败:', err);
       handleError(err as Error, ErrorType.CLIENT, ErrorSeverity.HIGH, {
         component: 'LayerManager',
         action: 'initialize_layers'
@@ -498,15 +509,37 @@ export class LayerManager {
 
   // 切换图层可见性
   toggleLayerVisibility(layerId: string): void {
-    const visibility = this.map.getLayoutProperty(layerId, 'visibility');
-    const newVisibility = visibility === 'visible' ? 'none' : 'visible';
-    this.map.setLayoutProperty(layerId, 'visibility', newVisibility);
+    try {
+      // 检查图层是否存在
+      if (!this.map.getLayer(layerId)) {
+        console.warn(`图层 ${layerId} 不存在，跳过可见性切换`);
+        return;
+      }
+      
+      const visibility = this.map.getLayoutProperty(layerId, 'visibility');
+      const newVisibility = visibility === 'visible' ? 'none' : 'visible';
+      this.map.setLayoutProperty(layerId, 'visibility', newVisibility);
+      console.log(`图层 ${layerId} 可见性已切换为: ${newVisibility}`);
+    } catch (err) {
+      console.error(`切换图层 ${layerId} 可见性失败:`, err);
+    }
   }
 
   // 获取图层可见性状态
   getLayerVisibility(layerId: string): boolean {
-    const visibility = this.map.getLayoutProperty(layerId, 'visibility');
-    return visibility === 'visible';
+    try {
+      // 检查图层是否存在
+      if (!this.map.getLayer(layerId)) {
+        console.warn(`图层 ${layerId} 不存在，返回默认可见性状态`);
+        return false;
+      }
+      
+      const visibility = this.map.getLayoutProperty(layerId, 'visibility');
+      return visibility === 'visible';
+    } catch (err) {
+      console.error(`获取图层 ${layerId} 可见性状态失败:`, err);
+      return false;
+    }
   }
 
   // 更新图层数据

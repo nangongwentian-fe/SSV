@@ -39,11 +39,17 @@ interface WeatherState {
   };
 }
 
+interface UIState {
+  drawerOpen: boolean;
+  drawerActiveTab: string;
+}
+
 interface MapStore {
   mapState: MapState;
   animationState: AnimationState;
   scenarioState: ScenarioState;
   weatherState: WeatherState;
+  uiState: UIState;
   layerManager: LayerManager | null;
   animationEngine: AnimationEngine | null;
   crowdFlowSimulator: CrowdFlowSimulator | null;
@@ -81,6 +87,11 @@ interface MapStore {
   setWeatherSignal: (signal: WeatherSignal) => Promise<void>;
   updateWeatherStats: (stats: WeatherStats) => void;
   
+  // UI methods
+  setDrawerOpen: (open: boolean) => void;
+  setDrawerActiveTab: (tab: string) => void;
+  openDrawerWithTab: (tab: string) => void;
+  
   // Cleanup
   cleanupAllSystems: () => void;
   destroy: () => void;
@@ -114,6 +125,11 @@ export const useMapStore = create<MapStore>((set, get) => ({
     currentSignal: WeatherSignal.NORMAL,
     weatherStats: null,
     isEmergencyActive: false
+  },
+  
+  uiState: {
+    drawerOpen: false,
+    drawerActiveTab: 'overview'
   },
   
   layerManager: null,
@@ -287,6 +303,7 @@ export const useMapStore = create<MapStore>((set, get) => ({
             lastModeChange: new Date()
           }
         });
+        console.log(`Scenario mode changed to: ${mode}`);
       });
       
       weatherSignalSystem.setOnSignalChange((signal, config) => {
@@ -335,7 +352,10 @@ export const useMapStore = create<MapStore>((set, get) => ({
   
   activateDemoMode: async () => {
     const { scenarioManager, scenarioState } = get();
+    console.log('mapStore: activateDemoMode 被调用', { scenarioManager: !!scenarioManager, isTransitioning: scenarioState.isTransitioning });
+    
     if (scenarioManager && !scenarioState.isTransitioning) {
+      console.log('mapStore: 开始激活演示模式');
       set({
         scenarioState: {
           ...scenarioState,
@@ -343,7 +363,9 @@ export const useMapStore = create<MapStore>((set, get) => ({
         }
       });
       try {
+        console.log('mapStore: 调用 scenarioManager.activateDemoMode()');
         await scenarioManager.activateDemoMode();
+        console.log('mapStore: 演示模式激活成功');
       } catch (error) {
         console.error('激活演示模式失败:', error);
         set({
@@ -353,6 +375,11 @@ export const useMapStore = create<MapStore>((set, get) => ({
           }
         });
       }
+    } else {
+      console.warn('mapStore: 无法激活演示模式', { 
+        hasScenarioManager: !!scenarioManager, 
+        isTransitioning: scenarioState.isTransitioning 
+      });
     }
   },
   
@@ -443,6 +470,38 @@ export const useMapStore = create<MapStore>((set, get) => ({
       weatherState: {
         ...weatherState,
         weatherStats: stats
+      }
+    });
+  },
+  
+  // UI methods
+  setDrawerOpen: (open: boolean) => {
+    const { uiState } = get();
+    set({
+      uiState: {
+        ...uiState,
+        drawerOpen: open
+      }
+    });
+  },
+  
+  setDrawerActiveTab: (tab: string) => {
+    const { uiState } = get();
+    set({
+      uiState: {
+        ...uiState,
+        drawerActiveTab: tab
+      }
+    });
+  },
+  
+  openDrawerWithTab: (tab: string) => {
+    const { uiState } = get();
+    set({
+      uiState: {
+        ...uiState,
+        drawerOpen: true,
+        drawerActiveTab: tab
       }
     });
   },
@@ -558,6 +617,10 @@ export const useMapStore = create<MapStore>((set, get) => ({
           currentSignal: WeatherSignal.NORMAL,
           weatherStats: null,
           isEmergencyActive: false
+        },
+        uiState: {
+          drawerOpen: false,
+          drawerActiveTab: 'overview'
         }
       });
       

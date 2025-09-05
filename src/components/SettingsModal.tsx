@@ -131,10 +131,10 @@ export default function SettingsModal({ isOpen, onClose, onSave }: SettingsModal
           </div>
           <button
             onClick={handleClose}
-            className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all duration-200 ease-in-out transform hover:scale-110"
             aria-label="關閉設置"
           >
-            <X className="w-5 h-5 text-gray-400" />
+            <X className="w-6 h-6" />
           </button>
         </div>
         

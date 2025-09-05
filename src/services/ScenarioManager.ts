@@ -153,8 +153,14 @@ export class ScenarioManager {
 
   // 激活演示模式
   async activateDemoMode(): Promise<void> {
-    console.log('激活演示模式');
-    await this.switchToMode(ScenarioMode.DEMO);
+    console.log('ScenarioManager: 激活演示模式开始');
+    try {
+      await this.switchToMode(ScenarioMode.DEMO);
+      console.log('ScenarioManager: 演示模式激活完成');
+    } catch (error) {
+      console.error('ScenarioManager: 激活演示模式失败:', error);
+      throw error;
+    }
   }
 
   // 激活演唱会模式
@@ -176,45 +182,38 @@ export class ScenarioManager {
   }
 
   // 切换到指定模式
-  private async switchToMode(mode: ScenarioMode): Promise<void> {
+  async switchToMode(mode: ScenarioMode): Promise<void> {
     if (this.currentMode === mode) {
-      console.log(`已经处于${mode}模式`);
+      console.log(`ScenarioManager: 已经处于${mode}模式`);
       return;
     }
 
-    const config = this.scenarioConfigs[mode];
-    
-    try {
-      // 1. 停止当前动画
-      await this.stopAllAnimations();
-      
-      // 2. 更新图层显示
-      await this.updateLayers(config.layers);
-      
-      // 3. 启动/停止数据模拟
-      this.updateDataSimulation(mode);
-      
-      // 4. 启动动画
-      await this.updateAnimations(config.animations);
-      
-      // 5. 设置天气信号
-      if (config.weatherSignal && this.weatherSignalSystem) {
-        await this.weatherSignalSystem.setSignal(config.weatherSignal);
-      }
-      
-      // 6. 更新当前模式
-      this.currentMode = mode;
-      
-      // 7. 触发回调
-      if (this.onModeChange) {
-        this.onModeChange(mode);
-      }
-      
-      console.log(`成功切换到${mode}模式`);
-    } catch (error) {
-      console.error(`切换到${mode}模式失败:`, error);
-      throw error;
+    console.log(`ScenarioManager: 切换到${mode}模式`);
+    this.currentMode = mode;
+
+    // 停止所有动画
+    console.log('ScenarioManager: 停止所有动画');
+    this.stopAllAnimations();
+
+    // 更新图层显示
+    console.log('ScenarioManager: 更新图层显示');
+    this.updateLayerVisibility(mode);
+
+    // 更新数据模拟
+    console.log('ScenarioManager: 更新数据模拟');
+    this.updateDataSimulation(mode);
+
+    // 启动动画
+    console.log('ScenarioManager: 启动动画');
+    await this.updateAnimations(mode);
+
+    // 触发回调
+    console.log('ScenarioManager: 触发模式变更回调');
+    if (this.onModeChange) {
+      this.onModeChange(mode);
     }
+    
+    console.log(`ScenarioManager: ${mode}模式切换完成`);
   }
 
   // 停止所有动画
@@ -231,7 +230,7 @@ export class ScenarioManager {
   }
 
   // 更新图层显示
-  private async updateLayers(layers: string[]): Promise<void> {
+  private updateLayerVisibility(mode: ScenarioMode): void {
     if (!this.layerManager) return;
     
     // 获取所有实际的图层ID
@@ -241,8 +240,8 @@ export class ScenarioManager {
       'flood-layer', 'patrol-layer'
     ];
     
-    // 根据当前模式决定图层显示策略
-     if (this.currentMode === ScenarioMode.TYPHOON) {
+    // 根据新模式决定图层显示策略
+     if (mode === ScenarioMode.TYPHOON) {
        // T8模式：显示内涝风险图层，隐藏活动相关图层
        if (!this.layerManager.getLayerVisibility('flood-layer')) {
          this.layerManager.toggleLayerVisibility('flood-layer');
@@ -263,7 +262,7 @@ export class ScenarioManager {
           this.layerManager.toggleLayerVisibility(layerId);
         }
       }
-    } else if (this.currentMode === ScenarioMode.CONCERT) {
+    } else if (mode === ScenarioMode.CONCERT) {
       // 演唱会模式：显示人流相关图层
       const concertLayers = ['flow-layer', 'heat-layer', 'bus-layer', 'patrol-layer'];
       for (const layerId of concertLayers) {
@@ -276,7 +275,7 @@ export class ScenarioManager {
       if (this.layerManager.getLayerVisibility('flood-layer')) {
         this.layerManager.toggleLayerVisibility('flood-layer');
       }
-    } else if (this.currentMode === ScenarioMode.DEMO) {
+    } else if (mode === ScenarioMode.DEMO) {
       // 演示模式：显示所有主要图层
       const demoLayers = ['sensors-layer', 'cctv-layer', 'heat-layer', 'bus-layer', 'patrol-layer'];
       for (const layerId of demoLayers) {
@@ -342,18 +341,74 @@ export class ScenarioManager {
   }
 
   // 更新动画
-  private async updateAnimations(config: { crowdFlow: boolean; patrol: boolean; shuttleBus: boolean }): Promise<void> {
-    if (config.crowdFlow && this.crowdFlowSimulator) {
-      this.crowdFlowSimulator.startSimulation();
+  private async updateAnimations(mode: ScenarioMode): Promise<void> {
+    console.log(`ScenarioManager: updateAnimations for mode ${mode}`);
+    
+    const config = this.scenarioConfigs[mode];
+    
+    switch (mode) {
+      case ScenarioMode.DEMO:
+      case ScenarioMode.CONCERT:
+        console.log('ScenarioManager: 启动演示/演唱会模式动画');
+        
+        // 启动人流动画
+        if (config.animations.crowdFlow && this.crowdFlowSimulator) {
+          console.log('ScenarioManager: 启动人流动画');
+          try {
+            await this.crowdFlowSimulator.startSimulation();
+            console.log('ScenarioManager: 人流动画启动成功');
+          } catch (error) {
+            console.error('ScenarioManager: 人流动画启动失败:', error);
+          }
+        } else if (config.animations.crowdFlow) {
+          console.warn('ScenarioManager: crowdFlowSimulator 未初始化');
+        }
+        
+        // 启动巡逻动画
+        if (config.animations.patrol && this.patrolSystem) {
+          console.log('ScenarioManager: 启动巡逻动画');
+          try {
+            this.patrolSystem.startPatrolSystem();
+            console.log('ScenarioManager: 巡逻动画启动成功');
+          } catch (error) {
+            console.error('ScenarioManager: 巡逻动画启动失败:', error);
+          }
+        } else if (config.animations.patrol) {
+          console.warn('ScenarioManager: patrolSystem 未初始化');
+        }
+        
+        // 启动穿梭巴士动画
+        if (config.animations.shuttleBus && this.shuttleBusSystem) {
+          console.log('ScenarioManager: 启动穿梭巴士动画');
+          try {
+            this.shuttleBusSystem.startBusSystem();
+            console.log('ScenarioManager: 穿梭巴士动画启动成功');
+          } catch (error) {
+            console.error('ScenarioManager: 穿梭巴士动画启动失败:', error);
+          }
+        } else if (config.animations.shuttleBus) {
+          console.warn('ScenarioManager: shuttleBusSystem 未初始化');
+        }
+        break;
+        
+      case ScenarioMode.TYPHOON:
+        console.log('ScenarioManager: 启动台风模式动画');
+        // 台风模式下只启动紧急巡逻
+        if (config.animations.patrol && this.patrolSystem) {
+          console.log('ScenarioManager: 启动紧急巡逻');
+          this.patrolSystem.startPatrolSystem();
+        } else if (config.animations.patrol) {
+          console.warn('ScenarioManager: patrolSystem 未初始化');
+        }
+        break;
+        
+      case ScenarioMode.NORMAL:
+      default:
+        console.log('ScenarioManager: 正常模式不启动动画');
+        break;
     }
     
-    if (config.patrol && this.patrolSystem) {
-      this.patrolSystem.startPatrolSystem();
-    }
-    
-    if (config.shuttleBus && this.shuttleBusSystem) {
-      this.shuttleBusSystem.startBusSystem();
-    }
+    console.log(`ScenarioManager: updateAnimations 完成 for mode ${mode}`);
   }
 
   // 清理资源

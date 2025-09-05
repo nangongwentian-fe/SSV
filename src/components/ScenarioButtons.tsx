@@ -11,7 +11,8 @@ export default function ScenarioButtons() {
     activateDemoMode, 
     activateConcertMode, 
     activateTyphoonMode, 
-    resetToNormalMode 
+    resetToNormalMode,
+    openDrawerWithTab
   } = useMapStore();
 
   const { showFeedback } = useFeedbackStore();
@@ -22,6 +23,9 @@ export default function ScenarioButtons() {
   };
 
   const handleConcertMode = () => {
+    // 打开抽屉面板并切换到事件标签页
+    openDrawerWithTab('events');
+    // 激活演唱会模式
     activateConcertMode();
     showFeedback('success', '已切換至演唱會模式');
   };

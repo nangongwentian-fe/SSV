@@ -387,7 +387,7 @@ export function SecurityTab() {
                   {record.location} · {new Date(record.timestamp).toLocaleTimeString('zh-TW')}
                 </div>
                 <div className="text-gray-400 text-xs">
-                  識別信心度: {record.confidence.toFixed(1)}%
+                  識別信心度: {(record.confidence || 0).toFixed(1)}%
                 </div>
                 {record.vehicleType && (
                   <div className="text-gray-400 text-xs">
