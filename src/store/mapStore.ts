@@ -128,7 +128,7 @@ export const useMapStore = create<MapStore>((set, get) => ({
   },
   
   uiState: {
-    drawerOpen: false,
+    drawerOpen: true,
     drawerActiveTab: 'overview'
   },
   
@@ -619,7 +619,7 @@ export const useMapStore = create<MapStore>((set, get) => ({
           isEmergencyActive: false
         },
         uiState: {
-          drawerOpen: false,
+          drawerOpen: true,
           drawerActiveTab: 'overview'
         }
       });
