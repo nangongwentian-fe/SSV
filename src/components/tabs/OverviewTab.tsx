@@ -99,7 +99,7 @@ export default function OverviewTab() {
     switch (status) {
       case 'warning': return 'border-yellow-500 bg-yellow-500/10';
       case 'critical': return 'border-red-500 bg-red-500/10';
-      default: return 'border-gray-600 bg-gray-800/50';
+      default: return 'border-gray-300 dark:border-gray-600 bg-gray-100/50 dark:bg-gray-800/50';
     }
   };
 
@@ -148,50 +148,50 @@ export default function OverviewTab() {
       </div>
 
       {/* 系统状态概览 */}
-      <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
-        <h3 className="text-lg font-semibold text-white mb-4">系統狀態</h3>
+      <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">系統狀態</h3>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="text-center">
             <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-2">
               <Zap className="w-6 h-6 text-green-400" />
             </div>
-            <div className="text-sm text-gray-400">電力系統</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">電力系統</div>
             <div className="text-green-400 font-semibold">正常</div>
           </div>
           <div className="text-center">
             <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-2">
               <Droplets className="w-6 h-6 text-blue-400" />
             </div>
-            <div className="text-sm text-gray-400">供水系統</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">供水系統</div>
             <div className="text-blue-400 font-semibold">正常</div>
           </div>
           <div className="text-center">
             <div className="w-12 h-12 bg-yellow-500/20 rounded-full flex items-center justify-center mx-auto mb-2">
               <Wind className="w-6 h-6 text-yellow-400" />
             </div>
-            <div className="text-sm text-gray-400">通風系統</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">通風系統</div>
             <div className="text-yellow-400 font-semibold">檢修中</div>
           </div>
           <div className="text-center">
             <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-2">
               <Users className="w-6 h-6 text-green-400" />
             </div>
-            <div className="text-sm text-gray-400">安防系統</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">安防系統</div>
             <div className="text-green-400 font-semibold">正常</div>
           </div>
         </div>
       </div>
 
       {/* 实时警报 */}
-      <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
-        <h3 className="text-lg font-semibold text-white mb-4">實時警報</h3>
+      <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">實時警報</h3>
         <div className="space-y-3">
           {alerts.map(alert => (
-            <div key={alert.id} className="flex items-center space-x-3 p-3 bg-gray-700/50 rounded-lg">
+            <div key={alert.id} className="flex items-center space-x-3 p-3 bg-gray-200/50 dark:bg-gray-700/50 rounded-lg">
               {getAlertIcon(alert.type)}
               <div className="flex-1">
-                <div className="text-white text-sm">{alert.message}</div>
-                <div className="text-gray-400 text-xs">{alert.timestamp.toLocaleString('zh-TW')}</div>
+                <div className="text-gray-900 dark:text-white text-sm">{alert.message}</div>
+                <div className="text-gray-600 dark:text-gray-400 text-xs">{alert.timestamp.toLocaleString('zh-TW')}</div>
               </div>
               <button className="text-[#ff880a] hover:text-[#e6770a] text-sm transition-colors">
                 處理
@@ -202,19 +202,19 @@ export default function OverviewTab() {
       </div>
 
       {/* 快速操作 */}
-      <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
-        <h3 className="text-lg font-semibold text-white mb-4">快速操作</h3>
+      <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">快速操作</h3>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <button className="bg-[#ff880a] hover:bg-[#e6770a] text-white px-4 py-2 rounded-lg transition-colors text-sm">
             緊急廣播
           </button>
-          <button className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors text-sm">
+          <button className="bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-gray-900 dark:text-white px-4 py-2 rounded-lg transition-colors text-sm">
             系統重啟
           </button>
-          <button className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors text-sm">
+          <button className="bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-gray-900 dark:text-white px-4 py-2 rounded-lg transition-colors text-sm">
             備份數據
           </button>
-          <button className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors text-sm">
+          <button className="bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-gray-900 dark:text-white px-4 py-2 rounded-lg transition-colors text-sm">
             生成報告
           </button>
         </div>

@@ -157,38 +157,38 @@ export function SecurityTab() {
     <div className="space-y-6">
       {/* 安防概览 */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
+        <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
           <div className="text-2xl font-bold text-green-400">
             {cameras.filter(c => c.status === 'online').length}
           </div>
-          <div className="text-sm text-gray-400">在線攝像頭</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">在線攝像頭</div>
         </div>
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
+        <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
           <div className="text-2xl font-bold text-blue-400">{parkingStatus.availableSpaces}</div>
-          <div className="text-sm text-gray-400">可用車位</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">可用車位</div>
         </div>
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
+        <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
           <div className="text-2xl font-bold text-yellow-400">
             {securityAlerts.filter(a => a.status === 'active').length}
           </div>
-          <div className="text-sm text-gray-400">活躍警報</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">活躍警報</div>
         </div>
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
-          <div className="text-2xl font-bold text-white">{anprStats?.totalToday || vehicleRecords.length}</div>
-          <div className="text-sm text-gray-400">今日車輛記錄</div>
+        <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
+          <div className="text-2xl font-bold text-gray-900 dark:text-white">{anprStats?.totalToday || vehicleRecords.length}</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">今日車輛記錄</div>
         </div>
       </div>
 
       {/* CCTV监控 */}
-      <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
-        <h3 className="text-lg font-semibold text-white mb-4">CCTV 監控</h3>
+      <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">CCTV 監控</h3>
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
           {cameras.map(camera => (
-            <div key={camera.id} className="bg-gray-700/50 rounded-lg p-3">
+            <div key={camera.id} className="bg-gray-200/50 dark:bg-gray-700/50 rounded-lg p-3">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center space-x-2">
                   <Camera className="w-4 h-4 text-blue-400" />
-                  <span className="text-white font-medium text-sm">{camera.name}</span>
+                  <span className="text-gray-900 dark:text-white font-medium text-sm">{camera.name}</span>
                 </div>
                 <div className={`px-2 py-1 rounded-full text-xs ${getCameraStatusColor(camera.status)}`}>
                   {getCameraStatusText(camera.status)}
@@ -210,7 +210,7 @@ export function SecurityTab() {
                   </div>
                 )}
               </div>
-              <div className="flex items-center justify-between text-xs text-gray-400">
+              <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
                 <span>{camera.location}</span>
                 <div className="flex items-center space-x-2">
                   {camera.recording && (
@@ -235,23 +235,23 @@ export function SecurityTab() {
       {/* 车场管理 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* 停车场状态 */}
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
-          <h3 className="text-lg font-semibold text-white mb-4">停車場狀態</h3>
+        <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">停車場狀態</h3>
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <span className="text-gray-400">總車位</span>
-              <span className="text-white font-semibold">{parkingStatus.totalSpaces}</span>
+              <span className="text-gray-600 dark:text-gray-400">總車位</span>
+              <span className="text-gray-900 dark:text-white font-semibold">{parkingStatus.totalSpaces}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-400">已佔用</span>
+              <span className="text-gray-600 dark:text-gray-400">已佔用</span>
               <span className="text-red-400 font-semibold">{parkingStatus.occupiedSpaces}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-400">可用</span>
+              <span className="text-gray-600 dark:text-gray-400">可用</span>
               <span className="text-green-400 font-semibold">{parkingStatus.availableSpaces}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-400">使用率</span>
+              <span className="text-gray-600 dark:text-gray-400">使用率</span>
               <span className="text-yellow-400 font-semibold">{Math.round(parkingStatus.occupancyRate * 100)}%</span>
             </div>
             <div className="w-full bg-gray-700 rounded-full h-3 mt-4">
@@ -260,22 +260,22 @@ export function SecurityTab() {
                 style={{ width: `${parkingStatus.occupancyRate * 100}%` }}
               ></div>
             </div>
-            <div className="text-center text-sm text-gray-400">
+            <div className="text-center text-sm text-gray-600 dark:text-gray-400">
               使用率: {Math.round(parkingStatus.occupancyRate * 100)}%
             </div>
           </div>
         </div>
 
         {/* 闸门控制 */}
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
-          <h3 className="text-lg font-semibold text-white mb-4">閘門控制</h3>
+        <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">閘門控制</h3>
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-gray-200/50 dark:bg-gray-700/50 rounded-lg">
               <div className="flex items-center space-x-3">
                 <Car className="w-5 h-5 text-blue-400" />
                 <div>
-                  <div className="text-white font-medium">入口閘門 A</div>
-                  <div className="text-gray-400 text-sm">停車場主入口</div>
+                  <div className="text-gray-900 dark:text-white font-medium">入口閘門 A</div>
+                  <div className="text-gray-600 dark:text-gray-400 text-sm">停車場主入口</div>
                 </div>
               </div>
               <button 
@@ -290,12 +290,12 @@ export function SecurityTab() {
                 {gateStatus['gate-a'] ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
               </button>
             </div>
-            <div className="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-gray-200/50 dark:bg-gray-700/50 rounded-lg">
               <div className="flex items-center space-x-3">
                 <Car className="w-5 h-5 text-blue-400" />
                 <div>
-                  <div className="text-white font-medium">出口閘門 B</div>
-                  <div className="text-gray-400 text-sm">停車場主出口</div>
+                  <div className="text-gray-900 dark:text-white font-medium">出口閘門 B</div>
+                  <div className="text-gray-600 dark:text-gray-400 text-sm">停車場主出口</div>
                 </div>
               </div>
               <button 
@@ -310,12 +310,12 @@ export function SecurityTab() {
                 {gateStatus['gate-b'] ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
               </button>
             </div>
-            <div className="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-gray-200/50 dark:bg-gray-700/50 rounded-lg">
               <div className="flex items-center space-x-3">
                 <Shield className="w-5 h-5 text-green-400" />
                 <div>
-                  <div className="text-white font-medium">安全巡邏</div>
-                  <div className="text-gray-400 text-sm">自動巡邏模式</div>
+                  <div className="text-gray-900 dark:text-white font-medium">安全巡邏</div>
+                  <div className="text-gray-600 dark:text-gray-400 text-sm">自動巡邏模式</div>
                 </div>
               </div>
               <button 
@@ -336,9 +336,9 @@ export function SecurityTab() {
       {/* 车辆记录和安防警报 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* 车辆记录 */}
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
+        <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-white">車輛記錄 (ANPR)</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">車輛記錄 (ANPR)</h3>
             {anprLogs && anprLogs.length > 0 && (
               <div className="flex items-center space-x-2 text-green-400">
                 <Activity className="w-4 h-4" />
@@ -350,26 +350,26 @@ export function SecurityTab() {
           {/* ANPR统计信息 */}
           {anprStats && (
             <div className="grid grid-cols-3 gap-4 mb-4">
-              <div className="bg-gray-700/50 rounded-lg p-3 text-center">
+              <div className="bg-gray-200/50 dark:bg-gray-700/50 rounded-lg p-3 text-center">
                 <div className="text-lg font-bold text-green-400">{anprStats.entriesToday}</div>
-                <div className="text-xs text-gray-400">今日進入</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">今日進入</div>
               </div>
-              <div className="bg-gray-700/50 rounded-lg p-3 text-center">
+              <div className="bg-gray-200/50 dark:bg-gray-700/50 rounded-lg p-3 text-center">
                 <div className="text-lg font-bold text-red-400">{anprStats.exitsToday}</div>
-                <div className="text-xs text-gray-400">今日離開</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">今日離開</div>
               </div>
-              <div className="bg-gray-700/50 rounded-lg p-3 text-center">
+              <div className="bg-gray-200/50 dark:bg-gray-700/50 rounded-lg p-3 text-center">
                 <div className="text-lg font-bold text-yellow-400">{anprStats.blacklistedToday}</div>
-                <div className="text-xs text-gray-400">黑名單命中</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">黑名單命中</div>
               </div>
             </div>
           )}
           
           <div className="space-y-3 max-h-64 overflow-y-auto">
             {(anprLogs && anprLogs.length > 0 ? anprLogs : vehicleRecords).map(record => (
-              <div key={record.id} className="bg-gray-700/50 rounded-lg p-3">
+              <div key={record.id} className="bg-gray-200/50 dark:bg-gray-700/50 rounded-lg p-3">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-white font-medium">{record.plateNumber}</span>
+                  <span className="text-gray-900 dark:text-white font-medium">{record.plateNumber}</span>
                   <div className="flex items-center space-x-2">
                     {record.isBlacklisted && (
                       <span className="px-2 py-1 rounded-full text-xs text-red-400 bg-red-400/20">
@@ -383,7 +383,7 @@ export function SecurityTab() {
                     </span>
                   </div>
                 </div>
-                <div className="text-gray-400 text-xs">
+                <div className="text-gray-600 dark:text-gray-400 text-xs">
                   {record.location} · {new Date(record.timestamp).toLocaleTimeString('zh-TW')}
                 </div>
                 <div className="text-gray-400 text-xs">
@@ -397,7 +397,7 @@ export function SecurityTab() {
               </div>
             ))}
             {(!anprLogs || anprLogs.length === 0) && vehicleRecords.length === 0 && (
-              <div className="text-center text-gray-400 py-8">
+              <div className="text-center text-gray-600 dark:text-gray-400 py-8">
                 <Clock className="w-8 h-8 mx-auto mb-2 opacity-50" />
                 <div className="text-sm">暫無車輛記錄</div>
               </div>
@@ -406,11 +406,11 @@ export function SecurityTab() {
         </div>
 
         {/* 安防警报 */}
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
-          <h3 className="text-lg font-semibold text-white mb-4">安防警報</h3>
+        <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">安防警報</h3>
           <div className="space-y-3 max-h-64 overflow-y-auto">
             {securityAlerts.map(alert => (
-              <div key={alert.id} className="bg-gray-700/50 rounded-lg p-3">
+              <div key={alert.id} className="bg-gray-200/50 dark:bg-gray-700/50 rounded-lg p-3">
                 <div className="flex items-center justify-between mb-2">
                   <span className={`px-2 py-1 rounded-full text-xs ${getAlertPriorityColor(alert.priority)}`}>
                     {alert.priority.toUpperCase()}
@@ -420,8 +420,8 @@ export function SecurityTab() {
                      alert.status === 'investigating' ? '調查中' : '已解決'}
                   </span>
                 </div>
-                <div className="text-white text-sm mb-1">{alert.message}</div>
-                <div className="text-gray-400 text-xs mb-2">
+                <div className="text-gray-900 dark:text-white text-sm mb-1">{alert.message}</div>
+                <div className="text-gray-600 dark:text-gray-400 text-xs mb-2">
                   {alert.location} · {alert.timestamp}
                 </div>
                 <div className="flex space-x-2">

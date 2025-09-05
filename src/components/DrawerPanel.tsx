@@ -51,7 +51,7 @@ export default function DrawerPanel({ isOpen, onClose, activeTab: externalActive
       <AnimatePresence>
         {isOpen && (
           <motion.div 
-            className="fixed top-16 right-0 h-[calc(100vh-4rem)] z-40 bg-gray-900/95 backdrop-blur-sm border-l border-gray-700 w-full max-w-md lg:max-w-lg xl:max-w-xl shadow-2xl"
+            className="fixed top-16 right-0 h-[calc(100vh-4rem)] z-40 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-l border-gray-200 dark:border-gray-700 w-full max-w-md lg:max-w-lg xl:max-w-xl shadow-2xl"
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
@@ -59,19 +59,19 @@ export default function DrawerPanel({ isOpen, onClose, activeTab: externalActive
           >
         <div className="h-full flex flex-col">
           {/* 面板头部 */}
-          <div className="flex items-center justify-between p-4 border-b border-gray-700">
-            <h2 className="text-lg font-semibold text-white">控制面板</h2>
+          <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">控制面板</h2>
             <button
               onClick={onClose}
-              className="p-3 hover:bg-gray-700 hover:bg-opacity-80 rounded-full transition-all duration-200 ease-in-out transform hover:scale-110 lg:hidden"
+              className="p-3 hover:bg-gray-200 dark:hover:bg-gray-700 hover:bg-opacity-80 rounded-full transition-all duration-200 ease-in-out transform hover:scale-110 lg:hidden"
               aria-label="關閉面板"
             >
-              <ChevronRight size={24} className="text-gray-300" />
+              <ChevronRight size={24} className="text-gray-700 dark:text-gray-300" />
             </button>
           </div>
           
           {/* 标签页导航 */}
-          <div className="border-b border-gray-700 bg-gray-800/50">
+          <div className="border-b border-gray-200 dark:border-gray-700 bg-gray-100/50 dark:bg-gray-800/50">
             <div className="flex overflow-x-auto scrollbar-hide">
               {tabs.map((tab) => (
                 <button
@@ -82,7 +82,7 @@ export default function DrawerPanel({ isOpen, onClose, activeTab: externalActive
                     flex items-center space-x-2 min-w-0
                     ${activeTab === tab.id
                       ? 'border-orange-500 text-orange-500 bg-orange-500/10'
-                      : 'border-transparent text-gray-400 hover:text-gray-300 hover:bg-gray-700/30'
+                      : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-200/30 dark:hover:bg-gray-700/30'
                     }
                   `}
                 >

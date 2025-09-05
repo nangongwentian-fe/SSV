@@ -11,7 +11,7 @@ interface TopBarProps {
 export default function TopBar({ onMenuClick, onSettingsClick, isDrawerOpen }: TopBarProps) {
   return (
     <motion.div 
-      className="fixed top-0 left-0 right-0 z-40 bg-gray-900/95 backdrop-blur-sm border-b border-gray-700"
+      className="fixed top-0 left-0 right-0 z-40 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700"
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
@@ -21,7 +21,7 @@ export default function TopBar({ onMenuClick, onSettingsClick, isDrawerOpen }: T
         <div className="flex items-center space-x-4">
           <motion.button
             onClick={onMenuClick}
-            className="p-2 hover:bg-gray-700/50 rounded-lg transition-all duration-200 group"
+            className="p-2 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-lg transition-all duration-200 group"
             aria-label={isDrawerOpen ? '关闭面板' : '打开面板'}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -32,9 +32,9 @@ export default function TopBar({ onMenuClick, onSettingsClick, isDrawerOpen }: T
               transition={{ duration: 0.2 }}
             >
               {isDrawerOpen ? (
-                <X className="w-5 h-5 text-gray-300 group-hover:text-white" />
+                <X className="w-5 h-5 text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white" />
               ) : (
-                <Menu className="w-5 h-5 text-gray-300 group-hover:text-white" />
+                <Menu className="w-5 h-5 text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white" />
               )}
             </motion.div>
           </motion.button>
@@ -52,10 +52,10 @@ export default function TopBar({ onMenuClick, onSettingsClick, isDrawerOpen }: T
             >
               <span className="text-white font-bold text-sm">R</span>
             </motion.div>
-            <h1 className="text-xl font-bold text-white hidden sm:block">
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white hidden sm:block">
               Runway 1331 智慧物業中控系統
             </h1>
-            <h1 className="text-lg font-bold text-white sm:hidden">
+            <h1 className="text-lg font-bold text-gray-900 dark:text-white sm:hidden">
               R1331
             </h1>
           </motion.div>
@@ -79,28 +79,28 @@ export default function TopBar({ onMenuClick, onSettingsClick, isDrawerOpen }: T
           transition={{ delay: 0.3, duration: 0.3 }}
         >
           {/* 系统状态指示器 */}
-          <div className="flex items-center space-x-2 bg-gray-800/50 rounded-lg px-3 py-2">
+          <div className="flex items-center space-x-2 bg-gray-100/50 dark:bg-gray-800/50 rounded-lg px-3 py-2">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span className="text-sm text-gray-300 hidden md:inline">系統正常</span>
-            <span className="text-sm text-gray-300 md:hidden">正常</span>
+            <span className="text-sm text-gray-700 dark:text-gray-300 hidden md:inline">系統正常</span>
+            <span className="text-sm text-gray-700 dark:text-gray-300 md:hidden">正常</span>
           </div>
           
           {/* 连接状态 */}
-          <div className="flex items-center space-x-2 bg-gray-800/50 rounded-lg px-3 py-2">
+          <div className="flex items-center space-x-2 bg-gray-100/50 dark:bg-gray-800/50 rounded-lg px-3 py-2">
             <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-            <span className="text-sm text-gray-300 hidden lg:inline">實時連接</span>
-            <span className="text-sm text-gray-300 lg:hidden">連接</span>
+            <span className="text-sm text-gray-700 dark:text-gray-300 hidden lg:inline">實時連接</span>
+            <span className="text-sm text-gray-700 dark:text-gray-300 lg:hidden">連接</span>
           </div>
           
           {/* 设置按钮 */}
           <motion.button
             onClick={onSettingsClick}
-            className="p-2 hover:bg-gray-700/50 rounded-lg transition-all duration-200 group"
+            className="p-2 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-lg transition-all duration-200 group"
             aria-label="系統設置"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Settings className="w-5 h-5 text-gray-300 group-hover:text-white group-hover:rotate-90 transition-all duration-200" />
+            <Settings className="w-5 h-5 text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white group-hover:rotate-90 transition-all duration-200" />
           </motion.button>
         </motion.div>
       </div>

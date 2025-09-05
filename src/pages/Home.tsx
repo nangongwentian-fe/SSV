@@ -13,6 +13,7 @@ import { useLoadingStore } from '../store/loadingStore';
 import { useFeedbackStore } from '../stores/feedbackStore';
 import { useTimerManager } from '../hooks/useCleanup';
 import { useMapStore } from '../store/mapStore';
+import { useThemeStore } from '../store/themeStore';
 
 export default function Home() {
   const { uiState, setDrawerOpen, setDrawerActiveTab } = useMapStore();
@@ -25,6 +26,7 @@ export default function Home() {
   const { addLoadingTask, removeLoadingTask } = useLoadingStore();
   const { showFeedback } = useFeedbackStore();
   const { setTimeout } = useTimerManager();
+  const { setTheme } = useThemeStore();
 
   // 页面加载时显示加载状态
   useEffect(() => {
@@ -44,6 +46,10 @@ export default function Home() {
 
   const handleSettingsSave = (settings: any) => {
     console.log('Settings saved:', settings);
+    // 应用主题设置
+    if (settings.theme) {
+      setTheme(settings.theme);
+    }
     showFeedback('设置已保存', 'success');
     // 这里可以添加设置保存后的逻辑，比如重新初始化地图等
   };

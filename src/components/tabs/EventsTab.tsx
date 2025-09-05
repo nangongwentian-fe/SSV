@@ -251,45 +251,45 @@ export default function EventsTab() {
     <div className="space-y-6">
       {/* 活动统计 */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
+        <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
           <div className="text-2xl font-bold text-green-400">3</div>
-          <div className="text-sm text-gray-400">啟用規則</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">啟用規則</div>
         </div>
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
+        <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
           <div className="text-2xl font-bold text-yellow-400">1</div>
-          <div className="text-sm text-gray-400">已觸發</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">已觸發</div>
         </div>
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
+        <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
           <div className="text-2xl font-bold text-red-400">2</div>
-          <div className="text-sm text-gray-400">活躍事件</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">活躍事件</div>
         </div>
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
-          <div className="text-2xl font-bold text-white">38</div>
-          <div className="text-sm text-gray-400">今日觸發</div>
+        <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
+          <div className="text-2xl font-bold text-gray-900 dark:text-white">38</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">今日觸發</div>
         </div>
       </div>
 
       {/* 自动化规则 */}
-      <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
-        <h3 className="text-lg font-semibold text-white mb-4">自動化規則</h3>
+      <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">自動化規則</h3>
         <div className="space-y-3">
           {automationRules.map(rule => (
-            <div key={rule.id} className="bg-gray-700/50 rounded-lg p-4">
+            <div key={rule.id} className="bg-gray-200/50 dark:bg-gray-700/50 rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
                   <div className="flex items-center space-x-3 mb-2">
-                    <span className="text-white font-medium">{rule.name}</span>
+                    <span className="text-gray-900 dark:text-white font-medium">{rule.name}</span>
                     <span className={`px-2 py-1 rounded-full text-xs ${getRuleStatusColor(rule.status)}`}>
                       {getRuleStatusText(rule.status)}
                     </span>
                   </div>
-                  <div className="text-gray-300 text-sm mb-1">
-                    <span className="text-gray-400">觸發條件:</span> {rule.trigger}
+                  <div className="text-gray-700 dark:text-gray-300 text-sm mb-1">
+                    <span className="text-gray-600 dark:text-gray-400">觸發條件:</span> {rule.trigger}
                   </div>
-                  <div className="text-gray-300 text-sm mb-2">
-                    <span className="text-gray-400">執行動作:</span> {rule.action}
+                  <div className="text-gray-700 dark:text-gray-300 text-sm mb-2">
+                    <span className="text-gray-600 dark:text-gray-400">執行動作:</span> {rule.action}
                   </div>
-                  <div className="text-gray-400 text-xs">
+                  <div className="text-gray-600 dark:text-gray-400 text-xs">
                     最後觸發: {rule.lastTriggered} · 觸發次數: {rule.triggerCount}
                   </div>
                 </div>
@@ -320,11 +320,11 @@ export default function EventsTab() {
       </div>
 
       {/* 实时事件 */}
-      <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
-        <h3 className="text-lg font-semibold text-white mb-4">實時事件</h3>
+      <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">實時事件</h3>
         <div className="space-y-3">
           {events.map(event => (
-            <div key={event.id} className="bg-gray-700/50 rounded-lg p-4">
+            <div key={event.id} className="bg-gray-200/50 dark:bg-gray-700/50 rounded-lg p-4">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center space-x-3 mb-2">
@@ -340,9 +340,9 @@ export default function EventsTab() {
                        event.status === 'investigating' ? '調查中' : '已解決'}
                     </span>
                   </div>
-                  <div className="text-white font-medium mb-1">{event.title}</div>
-                  <div className="text-gray-300 text-sm mb-2">{event.description}</div>
-                  <div className="text-gray-400 text-xs">
+                  <div className="text-gray-900 dark:text-white font-medium mb-1">{event.title}</div>
+                  <div className="text-gray-700 dark:text-gray-300 text-sm mb-2">{event.description}</div>
+                  <div className="text-gray-600 dark:text-gray-400 text-xs">
                     位置: {event.location} · 時間: {event.timestamp}
                     {event.assignee && ` · 負責人: ${event.assignee}`}
                   </div>
@@ -375,15 +375,15 @@ export default function EventsTab() {
       </div>
 
       {/* 动画控制 */}
-      <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
-        <h3 className="text-lg font-semibold text-white mb-4">動畫控制</h3>
+      <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">動畫控制</h3>
         
         {/* 人流散场控制 */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center space-x-2">
               <Users className="w-5 h-5 text-blue-400" />
-              <span className="text-white font-medium">演唱會散場模擬</span>
+              <span className="text-gray-900 dark:text-white font-medium">演唱會散場模擬</span>
             </div>
             <button
               onClick={handleCrowdFlowToggle}
@@ -399,18 +399,18 @@ export default function EventsTab() {
           </div>
           
           {animationState.isCrowdFlowActive && (
-            <div className="grid grid-cols-3 gap-4 bg-gray-700/30 rounded-lg p-3">
+            <div className="grid grid-cols-3 gap-4 bg-gray-300/30 dark:bg-gray-700/30 rounded-lg p-3">
               <div className="text-center">
-                <div className="text-lg font-bold text-white">{crowdFlowStats.total}</div>
-                <div className="text-xs text-gray-400">總人數</div>
+                <div className="text-lg font-bold text-gray-900 dark:text-white">{crowdFlowStats.total}</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">總人數</div>
               </div>
               <div className="text-center">
                 <div className="text-lg font-bold text-green-400">{crowdFlowStats.completed}</div>
-                <div className="text-xs text-gray-400">已離場</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">已離場</div>
               </div>
               <div className="text-center">
                 <div className="text-lg font-bold text-yellow-400">{crowdFlowStats.inProgress}</div>
-                <div className="text-xs text-gray-400">剩餘人數</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">剩餘人數</div>
               </div>
             </div>
           )}
@@ -421,7 +421,7 @@ export default function EventsTab() {
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center space-x-2">
               <Bus className="w-5 h-5 text-orange-400" />
-              <span className="text-white font-medium">穿梭巴士服務</span>
+              <span className="text-gray-900 dark:text-white font-medium">穿梭巴士服務</span>
             </div>
             <button
               onClick={handleShuttleBusToggle}
@@ -437,18 +437,18 @@ export default function EventsTab() {
           </div>
           
           {animationState.isShuttleBusActive && (
-            <div className="grid grid-cols-3 gap-4 bg-gray-700/30 rounded-lg p-3">
+            <div className="grid grid-cols-3 gap-4 bg-gray-300/30 dark:bg-gray-700/30 rounded-lg p-3">
               <div className="text-center">
                 <div className="text-lg font-bold text-blue-400">{shuttleBusStats.activeBuses}</div>
-                <div className="text-xs text-gray-400">運行巴士</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">運行巴士</div>
               </div>
               <div className="text-center">
                 <div className="text-lg font-bold text-green-400">{shuttleBusStats.totalPassengers}</div>
-                <div className="text-xs text-gray-400">載客人數</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">載客人數</div>
               </div>
               <div className="text-center">
                 <div className="text-lg font-bold text-purple-400">{shuttleBusStats.tripsCompleted}</div>
-                <div className="text-xs text-gray-400">完成班次</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">完成班次</div>
               </div>
             </div>
           )}
@@ -456,19 +456,19 @@ export default function EventsTab() {
       </div>
 
       {/* 快速操作 */}
-      <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
-        <h3 className="text-lg font-semibold text-white mb-4">快速操作</h3>
+      <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">快速操作</h3>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <button className="bg-[#ff880a] hover:bg-[#e6770a] text-white px-4 py-2 rounded-lg transition-colors text-sm">
             新增規則
           </button>
-          <button className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors text-sm">
+          <button className="bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-gray-900 dark:text-white px-4 py-2 rounded-lg transition-colors text-sm">
             事件統計
           </button>
-          <button className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors text-sm">
+          <button className="bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-gray-900 dark:text-white px-4 py-2 rounded-lg transition-colors text-sm">
             規則測試
           </button>
-          <button className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors text-sm">
+          <button className="bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-gray-900 dark:text-white px-4 py-2 rounded-lg transition-colors text-sm">
             導出日誌
           </button>
         </div>

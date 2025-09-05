@@ -265,13 +265,13 @@ export default function OperationsTab() {
   return (
     <div className="space-y-6">
       {/* 电梯群控状态概览 */}
-      <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600 mb-6">
+      <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600 mb-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-white">電梯群控系統</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">電梯群控系統</h3>
           {lastUpdate && (
             <div className="flex items-center space-x-2">
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              <span className="text-xs text-gray-400">
+              <span className="text-xs text-gray-600 dark:text-gray-400">
                 更新: {lastUpdate.toLocaleTimeString('zh-TW')}
               </span>
             </div>
@@ -280,21 +280,21 @@ export default function OperationsTab() {
         
         {/* 电梯统计 */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <div className="bg-gray-700/50 rounded-lg p-3 border border-gray-600">
+          <div className="bg-gray-200/50 dark:bg-gray-700/50 rounded-lg p-3 border border-gray-300 dark:border-gray-600">
             <div className="text-xl font-bold text-green-400">{statistics?.normalCount || 0}</div>
-            <div className="text-sm text-gray-400">運行中</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">運行中</div>
           </div>
-          <div className="bg-gray-700/50 rounded-lg p-3 border border-gray-600">
-            <div className="text-xl font-bold text-yellow-400">{statistics?.maintenanceCount || 0}</div>
-            <div className="text-sm text-gray-400">維護中</div>
-          </div>
-          <div className="bg-gray-700/50 rounded-lg p-3 border border-gray-600">
-            <div className="text-xl font-bold text-blue-400">{statistics?.totalTrips || 0}</div>
-            <div className="text-sm text-gray-400">今日行程</div>
-          </div>
-          <div className="bg-gray-700/50 rounded-lg p-3 border border-gray-600">
-            <div className="text-xl font-bold text-white">{statistics?.averageWaitTime || 0}s</div>
-            <div className="text-sm text-gray-400">平均等待</div>
+          <div className="bg-gray-200/50 dark:bg-gray-700/50 rounded-lg p-3 border border-gray-300 dark:border-gray-600">
+              <div className="text-xl font-bold text-yellow-400">{statistics?.maintenanceCount || 0}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">維護中</div>
+            </div>
+            <div className="bg-gray-200/50 dark:bg-gray-700/50 rounded-lg p-3 border border-gray-300 dark:border-gray-600">
+              <div className="text-xl font-bold text-blue-400">{statistics?.totalTrips || 0}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">今日行程</div>
+            </div>
+            <div className="bg-gray-200/50 dark:bg-gray-700/50 rounded-lg p-3 border border-gray-300 dark:border-gray-600">
+              <div className="text-xl font-bold text-gray-900 dark:text-white">{statistics?.averageWaitTime || 0}s</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">平均等待</div>
           </div>
         </div>
         
@@ -304,36 +304,36 @@ export default function OperationsTab() {
             <div key={elevator.id} className={`rounded-lg p-4 border transition-all duration-300 ${getElevatorStatusColor(elevator.status)}`}>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center space-x-3">
-                  <div className="text-white font-semibold">{elevator.id}</div>
+                  <div className="text-gray-900 dark:text-white font-semibold">{elevator.id}</div>
                   <div className="flex items-center space-x-1">
                     {getElevatorStatusIcon(elevator.status)}
-                    <span className="text-sm text-gray-300">{getElevatorStatusText(elevator.status)}</span>
+                    <span className="text-sm text-gray-700 dark:text-gray-300">{getElevatorStatusText(elevator.status)}</span>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-white font-mono text-lg">{elevator.currentFloor}F</div>
-                  <div className="text-xs text-gray-400">當前樓層</div>
+                  <div className="text-gray-900 dark:text-white font-mono text-lg">{elevator.currentFloor}F</div>
+                  <div className="text-xs text-gray-600 dark:text-gray-400">當前樓層</div>
                 </div>
               </div>
               
               <div className="grid grid-cols-3 gap-3 text-xs">
                 <div className="text-center">
-                  <div className="text-white font-medium">{elevator.load}</div>
-                  <div className="text-gray-400">載重</div>
+                  <div className="text-gray-900 dark:text-white font-medium">{elevator.load}</div>
+                  <div className="text-gray-600 dark:text-gray-400">載重</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-white font-medium">{elevator.targetFloor || '-'}F</div>
-                  <div className="text-gray-400">目標樓層</div>
+                  <div className="text-gray-900 dark:text-white font-medium">{elevator.targetFloor || '-'}F</div>
+                  <div className="text-gray-600 dark:text-gray-400">目標樓層</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-white font-medium">{elevator.waitingCalls?.length || 0}</div>
-                  <div className="text-gray-400">等待呼叫</div>
+                  <div className="text-gray-900 dark:text-white font-medium">{elevator.waitingCalls?.length || 0}</div>
+                  <div className="text-gray-600 dark:text-gray-400">等待呼叫</div>
                 </div>
               </div>
               
               {elevator.lastMaintenance && (
-                <div className="mt-2 pt-2 border-t border-gray-600">
-                  <div className="text-xs text-gray-400">
+                <div className="mt-2 pt-2 border-t border-gray-300 dark:border-gray-600">
+                  <div className="text-xs text-gray-600 dark:text-gray-400">
                     上次維護: {new Date(elevator.lastMaintenance).toLocaleDateString('zh-TW')}
                   </div>
                 </div>
@@ -345,30 +345,30 @@ export default function OperationsTab() {
 
       {/* 设备状态概览 */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
+        <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
           <div className="text-2xl font-bold text-green-400">4</div>
-          <div className="text-sm text-gray-400">運行中</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">運行中</div>
         </div>
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
+        <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
           <div className="text-2xl font-bold text-yellow-400">1</div>
-          <div className="text-sm text-gray-400">維護中</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">維護中</div>
         </div>
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
+        <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
           <div className="text-2xl font-bold text-red-400">1</div>
-          <div className="text-sm text-gray-400">故障</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">故障</div>
         </div>
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
-          <div className="text-2xl font-bold text-white">6</div>
-          <div className="text-sm text-gray-400">總設備</div>
+        <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
+          <div className="text-2xl font-bold text-gray-900 dark:text-white">6</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">總設備</div>
         </div>
       </div>
 
       {/* 设备列表 */}
-      <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
-        <h3 className="text-lg font-semibold text-white mb-4">設備狀態</h3>
+      <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">設備狀態</h3>
         <div className="space-y-3">
           {devices.map(eq => (
-            <div key={eq.id} className="bg-gray-700/50 rounded-lg p-4">
+            <div key={eq.id} className="bg-gray-200/50 dark:bg-gray-700/50 rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <div className={`flex items-center space-x-2 px-3 py-1 rounded-full text-xs ${getStatusColor(eq.status)}`}>
@@ -376,14 +376,14 @@ export default function OperationsTab() {
                     <span>{getStatusText(eq.status)}</span>
                   </div>
                   <div>
-                    <div className="text-white font-medium">{eq.name}</div>
-                    <div className="text-gray-400 text-sm">{eq.type} · {eq.location}</div>
+                    <div className="text-gray-900 dark:text-white font-medium">{eq.name}</div>
+                    <div className="text-gray-600 dark:text-gray-400 text-sm">{eq.type} · {eq.location}</div>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
                   <div className="text-right text-sm">
-                    <div className="text-white">運行時間: {eq.uptime}</div>
-                    <div className="text-gray-400">下次保養: {eq.nextMaintenance}</div>
+                    <div className="text-gray-900 dark:text-white">運行時間: {eq.uptime}</div>
+                    <div className="text-gray-600 dark:text-gray-400">下次保養: {eq.nextMaintenance}</div>
                   </div>
                   <div className="flex space-x-1">
                     {eq.status === 'offline' && (
@@ -434,23 +434,23 @@ export default function OperationsTab() {
       </div>
 
       {/* 维护记录 */}
-      <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
-        <h3 className="text-lg font-semibold text-white mb-4">維護記錄</h3>
+      <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">維護記錄</h3>
         <div className="space-y-3">
           {maintenanceLogs.map(log => (
-            <div key={log.id} className="bg-gray-700/50 rounded-lg p-4">
+            <div key={log.id} className="bg-gray-200/50 dark:bg-gray-700/50 rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
                   <div className="flex items-center space-x-3 mb-2">
-                    <span className="text-white font-medium">{log.equipment}</span>
-                    <span className="text-gray-400">·</span>
-                    <span className="text-gray-400">{log.type}</span>
+                    <span className="text-gray-900 dark:text-white font-medium">{log.equipment}</span>
+                    <span className="text-gray-600 dark:text-gray-400">·</span>
+                    <span className="text-gray-600 dark:text-gray-400">{log.type}</span>
                     <span className={`text-sm ${getMaintenanceStatusColor(log.status)}`}>
                       {getMaintenanceStatusText(log.status)}
                     </span>
                   </div>
-                  <div className="text-gray-300 text-sm mb-1">{log.description}</div>
-                  <div className="text-gray-400 text-xs">
+                  <div className="text-gray-700 dark:text-gray-300 text-sm mb-1">{log.description}</div>
+                  <div className="text-gray-600 dark:text-gray-400 text-xs">
                     技術員: {log.technician} · {log.date}
                   </div>
                 </div>
@@ -471,10 +471,10 @@ export default function OperationsTab() {
       </div>
 
       {/* 地图图层控制 */}
-      <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
+      <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
         <div className="flex items-center space-x-2 mb-4">
           <Map className="w-5 h-5 text-[#ff880a]" />
-          <h3 className="text-lg font-semibold text-white">地圖圖層控制</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">地圖圖層控制</h3>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           {layerConfigs.map(layer => (
@@ -491,19 +491,19 @@ export default function OperationsTab() {
       </div>
 
       {/* 快速操作 */}
-      <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
-        <h3 className="text-lg font-semibold text-white mb-4">快速操作</h3>
+      <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">快速操作</h3>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <button className="bg-[#ff880a] hover:bg-[#e6770a] text-white px-4 py-2 rounded-lg transition-colors text-sm">
             新增維護任務
           </button>
-          <button className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors text-sm">
+          <button className="bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-gray-900 dark:text-white px-4 py-2 rounded-lg transition-colors text-sm">
             設備診斷
           </button>
-          <button className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors text-sm">
+          <button className="bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-gray-900 dark:text-white px-4 py-2 rounded-lg transition-colors text-sm">
             生成報告
           </button>
-          <button className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors text-sm">
+          <button className="bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-gray-900 dark:text-white px-4 py-2 rounded-lg transition-colors text-sm">
             導出數據
           </button>
         </div>

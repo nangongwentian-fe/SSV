@@ -11,10 +11,17 @@ import Home from "@/pages/Home";
 import { handleError, ErrorType, ErrorSeverity } from "@/utils/errorHandler";
 import { globalPerformanceOptimizer } from "@/utils/PerformanceOptimizer";
 import { useCleanup } from "@/hooks/useCleanup";
+import { useThemeStore } from "@/store/themeStore";
 
 export default function App() {
   const [showPerformancePanel, setShowPerformancePanel] = React.useState(false);
   const { registerEventListener, registerCleanup } = useCleanup('App');
+  const { initializeTheme } = useThemeStore();
+
+  // 初始化主题
+  React.useEffect(() => {
+    initializeTheme();
+  }, [initializeTheme]);
 
   // 启动性能优化器
   React.useEffect(() => {

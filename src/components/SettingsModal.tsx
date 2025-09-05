@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Save, RotateCcw, Eye, EyeOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTimerManager } from '../hooks/useCleanup';
+import { useThemeStore } from '../store/themeStore';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -18,6 +19,7 @@ interface SettingsData {
 }
 
 export default function SettingsModal({ isOpen, onClose, onSave }: SettingsModalProps) {
+  const { theme, setTheme } = useThemeStore();
   const [settings, setSettings] = useState<SettingsData>({
     mapboxToken: '',
     tilesUrl: '',
@@ -43,13 +45,20 @@ export default function SettingsModal({ isOpen, onClose, onSave }: SettingsModal
           console.error('Failed to parse saved settings:', error);
         }
       }
+      // 确保设置中的主题与store同步（只在初始化时）
+      setSettings(prev => ({ ...prev, theme }));
       setHasChanges(false);
     }
-  }, [isOpen]);
+  }, [isOpen]); // 移除theme依赖，避免循环更新
 
   const handleInputChange = (key: keyof SettingsData, value: any) => {
     setSettings(prev => ({ ...prev, [key]: value }));
     setHasChanges(true);
+    
+    // 如果是主题切换，立即应用
+    if (key === 'theme') {
+      setTheme(value);
+    }
   };
 
   const handleSave = async () => {
@@ -116,7 +125,7 @@ export default function SettingsModal({ isOpen, onClose, onSave }: SettingsModal
           }}
         >
           <motion.div 
-            className="bg-gray-900 rounded-xl shadow-2xl w-full max-w-md border border-gray-700"
+            className="bg-gray-900 dark:bg-gray-900 light:bg-white rounded-xl shadow-2xl w-full max-w-md border border-gray-700 dark:border-gray-700 light:border-gray-200"
             initial={{ scale: 0.9, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -124,14 +133,14 @@ export default function SettingsModal({ isOpen, onClose, onSave }: SettingsModal
             onClick={(e) => e.stopPropagation()}
           >
         {/* 头部 */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-700">
+        <div className="flex items-center justify-between p-6 border-b border-gray-700 dark:border-gray-700 light:border-gray-200">
           <div>
-            <h3 className="text-xl font-semibold text-white">系統設置</h3>
-            <p className="text-sm text-gray-400 mt-1">配置地圖和系統參數</p>
+            <h3 className="text-xl font-semibold text-white dark:text-white light:text-gray-900">系統設置</h3>
+            <p className="text-sm text-gray-400 dark:text-gray-400 light:text-gray-600 mt-1">配置地圖和系統參數</p>
           </div>
           <button
             onClick={handleClose}
-            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all duration-200 ease-in-out transform hover:scale-110"
+            className="p-2 text-gray-400 dark:text-gray-400 light:text-gray-600 hover:text-gray-600 dark:hover:text-gray-300 light:hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-700 light:hover:bg-gray-200 rounded-full transition-all duration-200 ease-in-out transform hover:scale-110"
             aria-label="關閉設置"
           >
             <X className="w-6 h-6" />
@@ -142,7 +151,7 @@ export default function SettingsModal({ isOpen, onClose, onSave }: SettingsModal
         <div className="p-6 space-y-6 max-h-96 overflow-y-auto">
           {/* Mapbox Token */}
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-300">
+            <label className="block text-sm font-medium text-gray-300 dark:text-gray-300 light:text-gray-700">
               Mapbox Access Token
             </label>
             <div className="relative">
@@ -150,7 +159,7 @@ export default function SettingsModal({ isOpen, onClose, onSave }: SettingsModal
                 type={showToken ? 'text' : 'password'}
                 value={settings.mapboxToken}
                 onChange={(e) => handleInputChange('mapboxToken', e.target.value)}
-                className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 pr-10 text-white placeholder-gray-400 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors"
+                className="w-full bg-gray-800 dark:bg-gray-800 light:bg-gray-100 border border-gray-600 dark:border-gray-600 light:border-gray-300 rounded-lg px-3 py-2 pr-10 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors"
                 placeholder="輸入 Mapbox Access Token"
               />
               <button
@@ -161,14 +170,14 @@ export default function SettingsModal({ isOpen, onClose, onSave }: SettingsModal
                 {showToken ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-500 dark:text-gray-500 light:text-gray-600">
               用於顯示 Mapbox 地圖樣式，留空將使用 OpenStreetMap
             </p>
           </div>
           
           {/* 3D Tiles URL */}
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-300">
+            <label className="block text-sm font-medium text-gray-300 dark:text-gray-300 light:text-gray-700">
               3D Tiles URL
             </label>
             <input
@@ -178,20 +187,20 @@ export default function SettingsModal({ isOpen, onClose, onSave }: SettingsModal
               className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors"
               placeholder="輸入 tileset.json URL"
             />
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-500 dark:text-gray-500 light:text-gray-600">
               3D 建築模型數據源，支援 Cesium 3D Tiles 格式
             </p>
           </div>
           
           {/* 主题设置 */}
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-300">
+            <label className="block text-sm font-medium text-gray-300 dark:text-gray-300 light:text-gray-700">
               主題模式
             </label>
             <select
               value={settings.theme}
               onChange={(e) => handleInputChange('theme', e.target.value as 'dark' | 'light')}
-              className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors"
+              className="w-full bg-gray-800 dark:bg-gray-800 light:bg-gray-100 border border-gray-600 dark:border-gray-600 light:border-gray-300 rounded-lg px-3 py-2 text-white dark:text-white light:text-gray-900 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors"
             >
               <option value="dark">深色模式</option>
               <option value="light">淺色模式</option>
@@ -208,7 +217,7 @@ export default function SettingsModal({ isOpen, onClose, onSave }: SettingsModal
                 type="button"
                 onClick={() => handleInputChange('autoRefresh', !settings.autoRefresh)}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  settings.autoRefresh ? 'bg-orange-500' : 'bg-gray-600'
+                  settings.autoRefresh ? 'bg-orange-500' : 'bg-gray-600 dark:bg-gray-600 light:bg-gray-300'
                 }`}
               >
                 <span
@@ -221,7 +230,7 @@ export default function SettingsModal({ isOpen, onClose, onSave }: SettingsModal
             
             {settings.autoRefresh && (
               <div className="space-y-2">
-                <label className="block text-sm text-gray-400">
+                <label className="block text-sm text-gray-400 dark:text-gray-400 light:text-gray-600">
                   刷新間隔：{settings.refreshInterval / 1000}秒
                 </label>
                 <input
@@ -239,10 +248,10 @@ export default function SettingsModal({ isOpen, onClose, onSave }: SettingsModal
         </div>
         
         {/* 底部按钮 */}
-        <div className="flex items-center justify-between p-6 border-t border-gray-700">
+        <div className="flex items-center justify-between p-6 border-t border-gray-700 dark:border-gray-700 light:border-gray-200">
           <button
             onClick={handleReset}
-            className="flex items-center space-x-2 px-4 py-2 text-gray-400 hover:text-gray-300 hover:bg-gray-700 rounded-lg transition-colors"
+            className="flex items-center space-x-2 px-4 py-2 text-gray-400 dark:text-gray-400 light:text-gray-600 hover:text-gray-300 dark:hover:text-gray-200 light:hover:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-600 light:hover:bg-gray-200 rounded-lg transition-colors"
           >
             <RotateCcw className="w-4 h-4" />
             <span>重置</span>
@@ -251,14 +260,14 @@ export default function SettingsModal({ isOpen, onClose, onSave }: SettingsModal
           <div className="flex space-x-3">
             <button
               onClick={handleClose}
-              className="px-4 py-2 text-gray-400 hover:text-gray-300 hover:bg-gray-700 rounded-lg transition-colors"
+              className="px-4 py-2 text-gray-400 dark:text-gray-400 light:text-gray-600 hover:text-gray-300 dark:hover:text-gray-200 light:hover:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-600 light:hover:bg-gray-200 rounded-lg transition-colors"
             >
               取消
             </button>
             <button
               onClick={handleSave}
               disabled={!hasChanges || isSaving}
-              className="flex items-center space-x-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
+              className="flex items-center space-x-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-600 dark:disabled:bg-gray-600 light:disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
             >
               <Save className="w-4 h-4" />
               <span>{isSaving ? '保存中...' : '保存'}</span>

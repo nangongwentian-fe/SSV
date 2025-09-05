@@ -11,8 +11,10 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
 
-  /* 深色主题变量 */
+/* 深色主题变量 */
+:root.dark {
   --color-primary: #ff880a;
   --color-primary-hover: #e6770a;
   --color-bg-primary: #111827;
@@ -22,6 +24,23 @@
   --color-text-secondary: #d1d5db;
   --color-text-muted: #9ca3af;
   --color-border: #4b5563;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+}
+
+/* 浅色主题变量 */
+:root.light {
+  --color-primary: #ff880a;
+  --color-primary-hover: #e6770a;
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f3f4f6;
+  --color-bg-tertiary: #e5e7eb;
+  --color-text-primary: #111827;
+  --color-text-secondary: #374151;
+  --color-text-muted: #6b7280;
+  --color-border: #d1d5db;
   --color-success: #10b981;
   --color-warning: #f59e0b;
   --color-error: #ef4444;
@@ -47,16 +66,31 @@
   width: 6px;
 }
 
-::-webkit-scrollbar-track {
+/* 深色主题滚动条 */
+.dark ::-webkit-scrollbar-track {
   background: #374151;
 }
 
-::-webkit-scrollbar-thumb {
+.dark ::-webkit-scrollbar-thumb {
   background: #6b7280;
   border-radius: 3px;
 }
 
-::-webkit-scrollbar-thumb:hover {
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* 浅色主题滚动条 */
+.light ::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+
+.light ::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.light ::-webkit-scrollbar-thumb:hover {
   background: #9ca3af;
 }
 
@@ -68,13 +102,14 @@ input[type="range"] {
   cursor: pointer;
 }
 
-input[type="range"]::-webkit-slider-track {
+/* 深色主题 range 样式 */
+.dark input[type="range"]::-webkit-slider-track {
   background: #374151;
   height: 6px;
   border-radius: 3px;
 }
 
-input[type="range"]::-webkit-slider-thumb {
+.dark input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   background: #ff880a;
@@ -84,19 +119,52 @@ input[type="range"]::-webkit-slider-thumb {
   border: 2px solid #1f2937;
 }
 
-input[type="range"]::-moz-range-track {
+.dark input[type="range"]::-moz-range-track {
   background: #374151;
   height: 6px;
   border-radius: 3px;
   border: none;
 }
 
-input[type="range"]::-moz-range-thumb {
+.dark input[type="range"]::-moz-range-thumb {
   background: #ff880a;
   height: 18px;
   width: 18px;
   border-radius: 50%;
   border: 2px solid #1f2937;
+  cursor: pointer;
+}
+
+/* 浅色主题 range 样式 */
+.light input[type="range"]::-webkit-slider-track {
+  background: #e5e7eb;
+  height: 6px;
+  border-radius: 3px;
+}
+
+.light input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  background: #ff880a;
+  height: 18px;
+  width: 18px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+}
+
+.light input[type="range"]::-moz-range-track {
+  background: #e5e7eb;
+  height: 6px;
+  border-radius: 3px;
+  border: none;
+}
+
+.light input[type="range"]::-moz-range-thumb {
+  background: #ff880a;
+  height: 18px;
+  width: 18px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
   cursor: pointer;
 }
 

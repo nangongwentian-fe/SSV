@@ -1,7 +1,6 @@
 import { Play, Music, AlertTriangle, RotateCcw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMapStore } from '../store/mapStore';
-import { toast } from 'sonner';
 import { useFeedbackStore } from '../store/feedbackStore';
 import { ScenarioMode } from '../services/ScenarioManager';
 
@@ -40,18 +39,7 @@ export default function ScenarioButtons() {
     showFeedback('info', '已重置為正常模式');
   };
 
-  const getScenarioIcon = (mode: string) => {
-    switch (mode) {
-      case ScenarioMode.DEMO:
-        return <Play className="w-4 h-4" />;
-      case ScenarioMode.CONCERT:
-        return <Music className="w-4 h-4" />;
-      case ScenarioMode.TYPHOON:
-        return <AlertTriangle className="w-4 h-4" />;
-      default:
-        return <RotateCcw className="w-4 h-4" />;
-    }
-  };
+
 
   const getButtonClass = (mode: string) => {
     const isActive = scenarioState.currentMode === mode;
@@ -70,7 +58,7 @@ export default function ScenarioButtons() {
       }
     }
     
-    return `${baseClass} bg-gray-800/50 text-gray-300 hover:bg-gray-700/50 hover:text-white`;
+    return `${baseClass} bg-gray-200/50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 hover:bg-gray-300/50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white`;
   };
 
   return (

@@ -47,7 +47,7 @@ export default function BottomTicker({ className = '' }: BottomTickerProps) {
 
   return (
     <motion.div 
-      className={`fixed bottom-0 left-0 right-0 z-30 bg-gray-900/95 backdrop-blur-sm border-t border-gray-700 ${className}`}
+      className={`fixed bottom-0 left-0 right-0 z-30 bg-gray-900/95 dark:bg-gray-900/95 light:bg-white/95 backdrop-blur-sm border-t border-gray-700 dark:border-gray-700 light:border-gray-200 ${className}`}
       initial={{ y: 100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
@@ -61,7 +61,7 @@ export default function BottomTicker({ className = '' }: BottomTickerProps) {
           transition={{ delay: 0.1, duration: 0.3 }}
         >
           <motion.div 
-            className="flex items-center space-x-2 bg-gray-800/50 rounded-lg px-3 py-1"
+            className="flex items-center space-x-2 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-100/50 rounded-lg px-3 py-1"
             whileHover={{ scale: 1.05, backgroundColor: "rgba(31, 41, 55, 0.8)" }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
           >
@@ -79,7 +79,7 @@ export default function BottomTicker({ className = '' }: BottomTickerProps) {
           </motion.div>
           
           <motion.div 
-            className="flex items-center space-x-2 bg-gray-800/50 rounded-lg px-3 py-1"
+            className="flex items-center space-x-2 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-100/50 rounded-lg px-3 py-1"
             whileHover={{ scale: 1.05, backgroundColor: "rgba(31, 41, 55, 0.8)" }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
           >
@@ -97,7 +97,7 @@ export default function BottomTicker({ className = '' }: BottomTickerProps) {
           </motion.div>
           
           <motion.div 
-            className="flex items-center space-x-2 bg-gray-800/50 rounded-lg px-3 py-1"
+            className="flex items-center space-x-2 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-100/50 rounded-lg px-3 py-1"
             whileHover={{ scale: 1.05, backgroundColor: "rgba(31, 41, 55, 0.8)" }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
           >
@@ -122,9 +122,9 @@ export default function BottomTicker({ className = '' }: BottomTickerProps) {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2, duration: 0.3 }}
         >
-          <div className="bg-gray-800/50 rounded-lg h-8 overflow-hidden relative">
+          <div className="bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-100/50 rounded-lg h-8 overflow-hidden relative">
             <div className="h-full flex items-center">
-              <div className="animate-marquee whitespace-nowrap text-gray-300 text-xs">
+              <div className="animate-marquee whitespace-nowrap text-gray-300 dark:text-gray-300 light:text-gray-700 text-xs">
                 {tickerMessages.map((message, index) => (
                   <span key={index} className="px-8">
                     {message}
@@ -144,7 +144,7 @@ export default function BottomTicker({ className = '' }: BottomTickerProps) {
         >
           {/* 连接状态指示器 */}
           <motion.div 
-            className="flex items-center space-x-2 bg-gray-800/50 rounded-lg px-3 py-1"
+            className="flex items-center space-x-2 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-100/50 rounded-lg px-3 py-1"
             whileHover={{ scale: 1.05 }}
           >
             <Wifi className="w-4 h-4 text-green-400" />
@@ -152,7 +152,7 @@ export default function BottomTicker({ className = '' }: BottomTickerProps) {
           </motion.div>
           
           <motion.div 
-            className="flex items-center space-x-2 bg-gray-800/50 rounded-lg px-3 py-1"
+            className="flex items-center space-x-2 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-100/50 rounded-lg px-3 py-1"
             whileHover={{ scale: 1.05 }}
           >
             <Database className="w-4 h-4 text-blue-400" />
@@ -161,12 +161,12 @@ export default function BottomTicker({ className = '' }: BottomTickerProps) {
           
           {/* 当前时间 */}
           <motion.div 
-            className="flex items-center space-x-2 bg-gray-800/50 rounded-lg px-3 py-1"
+            className="flex items-center space-x-2 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-100/50 rounded-lg px-3 py-1"
             whileHover={{ scale: 1.05 }}
           >
             <Clock className="w-4 h-4 text-gray-400" />
             <motion.span 
-              className="text-gray-300 font-mono text-xs"
+              className="text-gray-300 dark:text-gray-300 light:text-gray-700 font-mono text-xs"
               key={currentTime.getSeconds()}
               initial={{ opacity: 0.7 }}
               animate={{ opacity: 1 }}
@@ -190,9 +190,9 @@ export default function BottomTicker({ className = '' }: BottomTickerProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4, duration: 0.3 }}
       >
-        <div className="bg-gray-800/50 rounded-lg h-6 overflow-hidden">
+        <div className="bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-100/50 rounded-lg h-6 overflow-hidden">
           <div className="h-full flex items-center">
-            <div className="animate-marquee whitespace-nowrap text-gray-300 text-xs">
+            <div className="animate-marquee whitespace-nowrap text-gray-300 dark:text-gray-300 light:text-gray-700 text-xs">
               {tickerMessages.slice(0, 4).map((message, index) => (
                 <span key={index} className="px-6">
                   {message}

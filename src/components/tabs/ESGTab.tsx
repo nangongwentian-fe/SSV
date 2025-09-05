@@ -372,51 +372,51 @@ export default function ESGTab() {
     <div className="space-y-6">
       {/* ESG概览 */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
+        <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
           <div className="text-2xl font-bold text-green-400">
             {environmentalMetrics.filter(m => m.status === 'good').length}
           </div>
-          <div className="text-sm text-gray-400">環境指標良好</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">環境指標良好</div>
         </div>
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
+        <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
           <div className="text-2xl font-bold text-blue-400">
             {complianceItems.filter(c => c.status === 'compliant').length}
           </div>
-          <div className="text-sm text-gray-400">合規項目</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">合規項目</div>
         </div>
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
+        <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
           <div className="text-2xl font-bold text-yellow-400">
             {wasteRecords.filter(w => w.status === 'collected').length}
           </div>
-          <div className="text-sm text-gray-400">今日垃圾清運</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">今日垃圾清運</div>
         </div>
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
-          <div className="text-2xl font-bold text-white">
+        <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
+          <div className="text-2xl font-bold text-gray-900 dark:text-white">
             {Math.round(sustainabilityGoals.reduce((acc, goal) => acc + (goal.current / goal.target * 100), 0) / sustainabilityGoals.length)}%
           </div>
-          <div className="text-sm text-gray-400">可持續目標進度</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">可持續目標進度</div>
         </div>
       </div>
 
       {/* 环境监测 */}
-      <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
-        <h3 className="text-lg font-semibold text-white mb-4">環境監測</h3>
+      <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">環境監測</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {environmentalMetrics.map(metric => {
             const IconComponent = metric.icon;
             return (
-              <div key={metric.id} className="bg-gray-700/50 rounded-lg p-4">
+              <div key={metric.id} className="bg-gray-200/50 dark:bg-gray-700/50 rounded-lg p-4">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center space-x-2">
                     <IconComponent className="w-5 h-5 text-blue-400" />
-                    <span className="text-white font-medium">{metric.name}</span>
+                    <span className="text-gray-900 dark:text-white font-medium">{metric.name}</span>
                   </div>
                   <div className={`px-2 py-1 rounded-full text-xs ${getMetricStatusColor(metric.status)}`}>
                     {metric.status === 'good' ? '良好' : metric.status === 'warning' ? '警告' : '嚴重'}
                   </div>
                 </div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-2xl font-bold text-white">
+                  <span className="text-2xl font-bold text-gray-900 dark:text-white">
                     {metric.value}{metric.unit}
                   </span>
                   <div className="flex items-center space-x-1">
@@ -425,7 +425,7 @@ export default function ESGTab() {
                     {metric.trend === 'stable' && <div className="w-4 h-4 bg-gray-400 rounded-full"></div>}
                   </div>
                 </div>
-                <div className="text-gray-400 text-sm">
+                <div className="text-gray-600 dark:text-gray-400 text-sm">
                   目標: {metric.target}{metric.unit}
                 </div>
                 <div className="w-full bg-gray-600 rounded-full h-2 mt-2">
@@ -448,18 +448,18 @@ export default function ESGTab() {
       {/* 天气信号和垃圾清运 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* 天气信号控制面板 */}
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
-          <h3 className="text-lg font-semibold text-white mb-4">天氣信號控制面板</h3>
+        <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">天氣信號控制面板</h3>
           
           {/* 当前信号状态 */}
-          <div className="mb-4 p-3 bg-gray-700/50 rounded-lg">
+          <div className="mb-4 p-3 bg-gray-200/50 dark:bg-gray-700/50 rounded-lg">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-white font-medium">當前信號</span>
+              <span className="text-gray-900 dark:text-white font-medium">當前信號</span>
               <span className={`px-3 py-1 rounded-full text-sm font-semibold ${getWeatherSignalColor(weatherState.currentSignal)}`}>
                 {weatherSignalOptions.find(opt => opt.signal === weatherState.currentSignal)?.label}
               </span>
             </div>
-            <div className="text-gray-400 text-sm">
+            <div className="text-gray-600 dark:text-gray-400 text-sm">
               {weatherSignalOptions.find(opt => opt.signal === weatherState.currentSignal)?.description}
             </div>
             {weatherState.isEmergencyActive && (
@@ -471,7 +471,7 @@ export default function ESGTab() {
 
           {/* 信号选择按钮 */}
           <div className="space-y-2">
-            <div className="text-white text-sm font-medium mb-2">選擇天氣信號:</div>
+            <div className="text-gray-900 dark:text-white text-sm font-medium mb-2">選擇天氣信號:</div>
             <div className="grid grid-cols-2 gap-2">
               {weatherSignalOptions.map(option => {
                 const IconComponent = option.icon;
@@ -483,7 +483,7 @@ export default function ESGTab() {
                     className={`p-2 rounded-lg border transition-all duration-200 flex items-center space-x-2 ${
                       isActive 
                         ? 'bg-blue-600 border-blue-500 text-white' 
-                        : 'bg-gray-700/50 border-gray-600 text-gray-300 hover:bg-gray-600/50'
+                        : 'bg-gray-200/50 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-300/50 dark:hover:bg-gray-600/50'
                     }`}
                   >
                     <IconComponent className="w-4 h-4" />
@@ -496,9 +496,9 @@ export default function ESGTab() {
 
           {/* 统计信息 */}
           {weatherState.statistics && (
-            <div className="mt-4 p-3 bg-gray-700/50 rounded-lg">
-              <div className="text-white text-sm font-medium mb-2">統計信息</div>
-              <div className="grid grid-cols-2 gap-2 text-xs text-gray-400">
+            <div className="mt-4 p-3 bg-gray-200/50 dark:bg-gray-700/50 rounded-lg">
+              <div className="text-gray-900 dark:text-white text-sm font-medium mb-2">統計信息</div>
+              <div className="grid grid-cols-2 gap-2 text-xs text-gray-600 dark:text-gray-400">
                 <div>持續時間: {Math.round(weatherState.statistics.duration / 60)}分鐘</div>
                 <div>受影響區域: {weatherState.statistics.affectedAreas.length}個</div>
                 <div>信號變更: {weatherState.statistics.signalChanges}次</div>
@@ -509,21 +509,21 @@ export default function ESGTab() {
         </div>
 
         {/* 垃圾清运 */}
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
-          <h3 className="text-lg font-semibold text-white mb-4">垃圾清運記錄</h3>
+        <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">垃圾清運記錄</h3>
           <div className="space-y-3 max-h-64 overflow-y-auto">
             {wasteRecords.map(record => (
-              <div key={record.id} className="bg-gray-700/50 rounded-lg p-3">
+              <div key={record.id} className="bg-gray-200/50 dark:bg-gray-700/50 rounded-lg p-3">
                 <div className="flex items-center justify-between mb-2">
                   <span className={`px-2 py-1 rounded-full text-xs ${getWasteTypeColor(record.type)}`}>
                     {getWasteTypeText(record.type)}
                   </span>
-                  <span className="text-white font-semibold">{record.weight} kg</span>
+                  <span className="text-gray-900 dark:text-white font-semibold">{record.weight} kg</span>
                 </div>
-                <div className="text-gray-400 text-xs mb-1">
+                <div className="text-gray-600 dark:text-gray-400 text-xs mb-1">
                   {record.location} · {record.timestamp}
                 </div>
-                <div className="text-gray-400 text-xs">
+                <div className="text-gray-600 dark:text-gray-400 text-xs">
                   狀態: {record.status === 'collected' ? '已清運' : 
                          record.status === 'pending' ? '待清運' : '處理中'}
                 </div>
@@ -536,22 +536,22 @@ export default function ESGTab() {
       {/* 合规管理和可持续发展目标 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* 合规管理 */}
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
-          <h3 className="text-lg font-semibold text-white mb-4">合規管理</h3>
+        <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">合規管理</h3>
           <div className="space-y-3 max-h-64 overflow-y-auto">
             {complianceItems.map(item => (
-              <div key={item.id} className="bg-gray-700/50 rounded-lg p-3">
+              <div key={item.id} className="bg-gray-200/50 dark:bg-gray-700/50 rounded-lg p-3">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-white font-medium">{item.title}</span>
+                  <span className="text-gray-900 dark:text-white font-medium">{item.title}</span>
                   <span className={`px-2 py-1 rounded-full text-xs ${getComplianceStatusColor(item.status)}`}>
                     {getComplianceStatusText(item.status)}
                   </span>
                 </div>
-                <div className="text-gray-400 text-sm mb-2">{item.description}</div>
-                <div className="text-gray-400 text-xs">
+                <div className="text-gray-600 dark:text-gray-400 text-sm mb-2">{item.description}</div>
+                <div className="text-gray-600 dark:text-gray-400 text-xs">
                   負責部門: {item.responsible}
                 </div>
-                <div className="text-gray-400 text-xs">
+                <div className="text-gray-500 dark:text-gray-400 text-xs">
                   上次審核: {item.lastAudit} | 下次審核: {item.nextAudit}
                 </div>
               </div>
@@ -560,27 +560,27 @@ export default function ESGTab() {
         </div>
 
         {/* 可持续发展目标 */}
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
-          <h3 className="text-lg font-semibold text-white mb-4">可持續發展目標</h3>
+        <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">可持續發展目標</h3>
           <div className="space-y-4">
             {sustainabilityGoals.map(goal => {
               const progress = (goal.current / goal.target) * 100;
               return (
-                <div key={goal.id} className="bg-gray-700/50 rounded-lg p-3">
+                <div key={goal.id} className="bg-gray-200/50 dark:bg-gray-700/50 rounded-lg p-3">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-white font-medium">{goal.title}</span>
+                    <span className="text-gray-900 dark:text-white font-medium">{goal.title}</span>
                     <span className={`px-2 py-1 rounded-full text-xs ${getCategoryColor(goal.category)}`}>
                       {goal.category.toUpperCase()}
                     </span>
                   </div>
-                  <div className="text-gray-400 text-sm mb-2">{goal.description}</div>
+                  <div className="text-gray-600 dark:text-gray-400 text-sm mb-2">{goal.description}</div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-white text-sm">
+                    <span className="text-gray-900 dark:text-white text-sm">
                       {goal.current}{goal.unit} / {goal.target}{goal.unit}
                     </span>
-                    <span className="text-gray-400 text-xs">截止: {goal.deadline}</span>
+                    <span className="text-gray-600 dark:text-gray-400 text-xs">截止: {goal.deadline}</span>
                   </div>
-                  <div className="w-full bg-gray-600 rounded-full h-2">
+                  <div className="w-full bg-gray-300 dark:bg-gray-600 rounded-full h-2">
                     <div 
                       className={`h-2 rounded-full transition-all duration-300 ${
                         progress >= 100 ? 'bg-green-400' : 
@@ -590,7 +590,7 @@ export default function ESGTab() {
                       style={{ width: `${Math.min(100, progress)}%` }}
                     ></div>
                   </div>
-                  <div className="text-right text-xs text-gray-400 mt-1">
+                  <div className="text-right text-xs text-gray-600 dark:text-gray-400 mt-1">
                     {Math.round(progress)}% 完成
                   </div>
                 </div>
@@ -601,22 +601,22 @@ export default function ESGTab() {
       </div>
 
       {/* 快速操作 */}
-      <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
-        <h3 className="text-lg font-semibold text-white mb-4">快速操作</h3>
+      <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-300 dark:border-gray-600">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">快速操作</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <button className="bg-green-600 hover:bg-green-700 text-white p-3 rounded-lg transition-colors flex items-center justify-center space-x-2">
+          <button className="bg-green-600 hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700 text-white p-3 rounded-lg transition-colors flex items-center justify-center space-x-2">
             <Leaf className="w-4 h-4" />
             <span className="text-sm">環境報告</span>
           </button>
-          <button className="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg transition-colors flex items-center justify-center space-x-2">
+          <button className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-white p-3 rounded-lg transition-colors flex items-center justify-center space-x-2">
             <FileText className="w-4 h-4" />
             <span className="text-sm">合規檢查</span>
           </button>
-          <button className="bg-yellow-600 hover:bg-yellow-700 text-white p-3 rounded-lg transition-colors flex items-center justify-center space-x-2">
+          <button className="bg-yellow-600 hover:bg-yellow-700 dark:bg-yellow-600 dark:hover:bg-yellow-700 text-white p-3 rounded-lg transition-colors flex items-center justify-center space-x-2">
             <Award className="w-4 h-4" />
             <span className="text-sm">ESG評級</span>
           </button>
-          <button className="bg-purple-600 hover:bg-purple-700 text-white p-3 rounded-lg transition-colors flex items-center justify-center space-x-2">
+          <button className="bg-purple-600 hover:bg-purple-700 dark:bg-purple-600 dark:hover:bg-purple-700 text-white p-3 rounded-lg transition-colors flex items-center justify-center space-x-2">
             <Users className="w-4 h-4" />
             <span className="text-sm">社會責任</span>
           </button>
