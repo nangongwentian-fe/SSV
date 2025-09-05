@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Runway 1331｜啟德 智慧物業管理中控 DEMO · HK+</title>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.css" rel="stylesheet">
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@lets-fiware/mapbox-3dtiles@1.0.1/dist/index.js"></script>
+  <style>
+    :root{
+      --bg: #07080c; --panel:#0d1117cc; --card:#0c0f16cc; --muted:#94a3b8; --brand:#22d3ee; --accent:#8b5cf6;
+      --danger:#ef4444; --warn:#f59e0b; --ok:#22c55e; --info:#38bdf8;
+    }
+    html,body{height:100%;margin:0;background:radial-gradient(1200px 800px at 20% -10%, #0b1220 0%, #07080c 55%); color:#e5e7eb;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "PingFang SC","Noto Sans TC","Microsoft JhengHei", Arial;}
+    #map{position:absolute; inset:0;}
+    .topbar{
+      position:absolute; top:14px; left:14px; right:14px; height:64px;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:10px 14px; border-radius:16px;
+      background:linear-gradient(180deg, #0f172acc, #0b1020bb);
+      border:1px solid #1f2937; backdrop-filter: blur(8px); box-shadow: 0 10px 26px rgba(0,0,0,.45);
+    }
+    .brand{display:flex; align-items:center; gap:12px;}
+    .brand .logo{width:36px;height:36px;border-radius:10px;background:conic-gradient(from 20deg, var(--brand), #38bdf8, #60a5fa); box-shadow:0 0 0 2px #1f2937 inset;}
+    .brand h1{font-size:18px; margin:0; letter-spacing:.3px;}
+    .chips{display:flex; gap:8px; margin-left:10px}
+    .chip{display:inline-flex; align-items:center; gap:6px; padding:4px 10px; font-size:12px; border-radius:999px; background:#0b1320; border:1px solid #1f2937}
+    .chip .dot{width:10px;height:10px;border-radius:999px}
+    .actions{display:flex; align-items:center; gap:8px;}
+    .btn{border:0;border-radius:12px;padding:10px 12px; background:#0b1320; border:1px solid #1f2937; color:#e5e7eb; cursor:pointer}
+    .btn.icon{display:inline-grid; place-items:center; width:40px; height:40px;}
+    .btn.primary{background:linear-gradient(135deg,#2563eb,#4f46e5)}
+    .btn.accent{background:linear-gradient(135deg,#0ea5e9,#22d3ee)}
+    .btn.warn{background:linear-gradient(135deg,#f59e0b,#ef4444)}
+    .btn:active{transform:translateY(1px)}
+    .drawer{
+      position:absolute; top:94px; right:14px; width:400px; max-width:92vw; bottom:14px;
+      background:var(--panel); color:#e5e7eb; border-radius:18px; box-shadow:0 12px 32px rgba(0,0,0,.45);
+      border:1px solid #1f2937; display:flex; flex-direction:column; overflow:hidden;
+    }
+    .tabs{display:grid; grid-template-columns: repeat(5, 1fr); gap:6px; padding:10px; background:#0a0f1acc; border-bottom:1px solid #1f2937}
+    .tab{ text-align:center; padding:10px 6px; border-radius:12px; cursor:pointer; font-size:13px; color:#cbd5e1; border:1px solid #1f2937}
+    .tab.active{background:linear-gradient(135deg,#0f172a,#111827); color:#fff; border-color:#334155; box-shadow: 0 6px 18px rgba(0,0,0,.25) inset;}
+    .content{padding:12px; overflow:auto; }
+    .grid{display:grid; gap:10px}
+    .grid.kpi{grid-template-columns:1fr 1fr}
+    .card{
+      background:var(--card); border:1px solid #1f2937; border-radius:16px; padding:12px; box-shadow:0 6px 16px rgba(0,0,0,.35);
+    }
+    .card h3{font-size:13px; margin:0 0 6px 0; color:#cbd5e1}
+    .metric{font-size:24px; font-weight:700}
+    .muted{color:var(--muted); font-size:12px}
+    .bar{height:8px; background:#0b1320; border-radius:8px; overflow:hidden; margin:6px 0; border:1px solid #1f2937}
+    .bar>div{height:100%; width:40%; background:linear-gradient(90deg,#34d399,#84cc16)}
+    .row{display:flex; align-items:center; justify-content:space-between; gap:8px}
+    .pill{display:inline-flex; align-items:center; gap:6px; padding:4px 8px; background:#0b1320; color:#cbd5e1; border-radius:999px; font-size:12px; border:1px solid #1f2937}
+    .list{list-style:none; margin:0; padding-left:16px;}
+    .list li{margin:6px 0; font-size:13px}
+    .status-dot{display:inline-block;width:10px;height:10px;border-radius:999px;margin-right:6px; vertical-align:-1px}
+    .tiny{font-size:11px; color:#9ca3af}
+    .ticker{
+      position:absolute; left:14px; bottom:14px; right:420px; min-height:56px; padding:10px 12px;
+      background:#0b0d12cc; border:1px solid #1f2937; color:#e5e7eb; border-radius:14px; display:flex; align-items:center; gap:12px;
+      overflow:hidden; backdrop-filter: blur(6px);
+    }
+    .ticker h4{margin:0 8px 0 0; font-size:13px; color:#cbd5e1}
+    .ticker .marquee{white-space:nowrap; animation:scroll 28s linear infinite}
+    @keyframes scroll{ from{transform:translateX(0)} to{transform:translateX(-50%)} }
+    .legend{position:absolute; right:420px; bottom:14px; background:#0b0d12cc; border:1px solid #1f2937; padding:8px 10px; border-radius:12px; color:#cbd5e1; font-size:12px}
+    .legend .chip{display:inline-block; padding:2px 8px; border-radius:999px; margin-right:6px; border:1px solid #1f2937}
+    .modal{position:fixed; inset:0; display:none; place-items:center; background:rgba(0,0,0,.45);}
+    .modal .box{width:min(820px,92vw); background:#0b0d12; color:#e5e7eb; border:1px solid #1f2937; border-radius:18px; padding:16px; box-shadow:0 12px 32px rgba(0,0,0,.5)}
+    .modal .grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    .input{width:100%; padding:10px; border-radius:10px; border:1px solid #273449; background:#0e1422; color:#e5e7eb}
+    .divider{height:1px;background:#1f2937;margin:10px -16px}
+    @media(max-width:1100px){
+      .drawer{width:360px}
+      .tabs{grid-template-columns: repeat(3, 1fr)}
+      .legend{right:14px; bottom:84px}
+      .ticker{right:14px}
+    }
+  </style>
+</head>
+<body>
+<div id="map"></div>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="logo"></div>
+    <h1>Runway 1331 智慧物業中控</h1>
+    <div class="chips">
+      <div class="chip"><span class="dot" id="dot-live" style="background:#10b981"></span>LIVE</div>
+      <div class="chip"><span class="dot" id="dot-signal" style="background:#22d3ee"></span><span id="signal-label">HKO：正常</span></div>
+      <div class="chip"><span class="dot" style="background:#f59e0b"></span>演出日</div>
+    </div>
+  </div>
+  <div class="actions">
+    <button class="btn accent" id="btnStartAll">一鍵演示</button>
+    <button class="btn primary" id="btnConcert">演唱會模式</button>
+    <button class="btn warn" id="btnTyphoon">T8 模式</button>
+    <button class="btn icon" id="btnSettings" title="設定">⚙️</button>
+  </div>
+</div>
+
+<div class="drawer">
+  <div class="tabs">
+    <div class="tab active" data-tab="overview">概覽</div>
+    <div class="tab" data-tab="ops">運維</div>
+    <div class="tab" data-tab="event">活動聯動</div>
+    <div class="tab" data-tab="security">安防/車場</div>
+    <div class="tab" data-tab="esg">ESG/合規</div>
+  </div>
+
+  <div class="content" id="tab-overview">
+    <div class="grid kpi">
+      <div class="card">
+        <h3>今日用電（宿舍/商業）</h3>
+        <div class="metric" id="m-elec">— kWh</div>
+        <div class="bar"><div id="b-elec"></div></div>
+        <div class="muted">目標：本月 ↓5%（相較去年同期）</div>
+      </div>
+      <div class="card">
+        <h3>用水（m³）</h3>
+        <div class="metric" id="m-water">— m³</div>
+        <div class="bar"><div id="b-water" style="background:linear-gradient(90deg,#38bdf8,#22d3ee)"></div></div>
+        <div class="muted">漏損監測：正常</div>
+      </div>
+      <div class="card">
+        <h3>車場空置率</h3>
+        <div class="metric"><span id="m-parking">—%</span></div>
+        <div class="row">
+          <span class="pill"><span class="status-dot" style="background:var(--ok)"></span> Mall-2</span>
+          <span class="pill"><span class="status-dot" style="background:var(--warn)"></span> Runway Bay</span>
+          <span class="pill"><span class="status-dot" style="background:var(--ok)"></span> Tower P</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>舒適度（IAQ 綜合）</h3>
+        <div class="metric" id="m-comfort">—</div>
+        <div class="muted">來源：溫濕度、CO₂、PM₂.₅、投訴</div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:10px">
+      <h3>維保事件 / 工單</h3>
+      <ul class="list" id="tickets">
+        <li><span class="status-dot" style="background:var(--warn)"></span>應急燈巡檢（商業街 B2）D-3</li>
+        <li><span class="status-dot" style="background:var(--danger)"></span>消防泵異常（泵房 P1）緊急</li>
+        <li><span class="status-dot" style="background:var(--ok)"></span>空調濾網更換（宿舍 A 棟）D-6</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="content" id="tab-ops" style="display:none">
+    <div class="card">
+      <h3>地圖圖層</h3>
+      <div class="grid">
+        <div class="row"><span>設備點位（電錶/水錶/煙感/門禁）</span><label><input type="checkbox" id="chkSensors" checked> 顯示</label></div>
+        <div class="row"><span>人流熱力</span><label><input type="checkbox" id="chkHeatmap"> 顯示</label></div>
+        <div class="row"><span>CCTV</span><label><input type="checkbox" id="chkCCTV" checked> 顯示</label></div>
+        <div class="row"><span>穿梭巴士</span><label><input type="checkbox" id="chkBus"> 啟用</label></div>
+        <div class="row"><span>演唱會散場人流</span><label><input type="checkbox" id="chkFlow"> 啟用</label></div>
+        <div class="row"><span>Runway 1331 區域</span><label><input type="checkbox" id="chkFence" checked> 顯示</label></div>
+        <div class="row"><span>IAQ 空氣質量</span><label><input type="checkbox" id="chkIAQ"> 顯示</label></div>
+        <div class="row"><span>垃圾桶/清運</span><label><input type="checkbox" id="chkBins"> 顯示</label></div>
+        <div class="row"><span>內澇/暴雨風險</span><label><input type="checkbox" id="chkFlood"> 顯示</label></div>
+        <div class="row"><span>安保巡更</span><label><input type="checkbox" id="chkPatrol"> 啟用</label></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>電梯群控（A 座）</h3>
+      <div class="grid" style="grid-template-columns:repeat(3,1fr)">
+        <div class="card" style="padding:8px"><div class="tiny">L1</div><div class="metric" id="lift1">7F ↑</div><div class="muted">正常</div></div>
+        <div class="card" style="padding:8px"><div class="tiny">L2</div><div class="metric" id="lift2">3F ↓</div><div class="muted">正常</div></div>
+        <div class="card" style="padding:8px"><div class="tiny">L3</div><div class="metric" id="lift3">15F ↑</div><div class="muted">高峰模式</div></div>
+        <div class="card" style="padding:8px"><div class="tiny">L4</div><div class="metric" id="lift4">GF —</div><div class="muted">維保</div></div>
+        <div class="card" style="padding:8px"><div class="tiny">L5</div><div class="metric" id="lift5">9F ↓</div><div class="muted">正常</div></div>
+        <div class="card" style="padding:8px"><div class="tiny">L6</div><div class="metric" id="lift6">12F ↑</div><div class="muted">正常</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>能耗看板（宿舍區）</h3>
+      <div class="row"><span class="muted">今日用電</span><span id="v-elec">— kWh</span></div>
+      <div class="bar"><div id="bar-elec"></div></div>
+      <div class="row"><span class="muted">今日用水</span><span id="v-water">— m³</span></div>
+      <div class="bar"><div id="bar-water"></div></div>
+    </div>
+  </div>
+
+  <div class="content" id="tab-event" style="display:none">
+    <div class="card">
+      <h3>啟德體育園 ∙ 演唱會聯動</h3>
+      <div class="row"><span>預估觀眾</span><input id="audience" type="range" min="5" max="50" step="1" value="28" style="width:60%"><span id="audVal">28k</span></div>
+      <div class="row"><span>散場開始</span><button class="btn" id="btnStartFlow">開始</button><button class="btn ghost" id="btnStopFlow">停止</button></div>
+      <div class="row"><span>路徑分流策略</span><span class="muted">MTR 60% / Taxi 25% / Runway 1331 15%</span></div>
+      <div class="row"><span>穿梭巴士</span><button class="btn ghost" id="btnBus">啟用/停止</button></div>
+    </div>
+    <div class="card">
+      <h3>人流指標</h3>
+      <div class="grid kpi">
+        <div>
+          <div class="muted">進站速度（人/分鐘）</div>
+          <div class="metric" id="m-mtr">—</div>
+        </div>
+        <div>
+          <div class="muted">出租車候客（人）</div>
+          <div class="metric" id="m-taxi">—</div>
+        </div>
+        <div>
+          <div class="muted">抵達 Runway 1331（人）</div>
+          <div class="metric" id="m-rwy">—</div>
+        </div>
+        <div>
+          <div class="muted">平均疏散時間（min）</div>
+          <div class="metric" id="m-eta">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content" id="tab-security" style="display:none">
+    <div class="card">
+      <h3>車場 ANPR & 車閘</h3>
+      <div class="grid kpi">
+        <div><div class="muted">入場車流（輛/分鐘）</div><div class="metric" id="m-in">—</div></div>
+        <div><div class="muted">出場車流（輛/分鐘）</div><div class="metric" id="m-out">—</div></div>
+        <div><div class="muted">車閘狀態</div><div class="metric" id="m-gate">CLOSED</div></div>
+        <div><div class="muted">黑名單識別</div><div class="metric" id="m-black">0</div></div>
+      </div>
+      <div class="row" style="margin-top:8px"><button class="btn accent" id="btnOpenGate">開閘</button><button class="btn" id="btnCloseGate">關閘</button></div>
+      <div class="tiny" style="margin-top:6px">ANPR 日誌</div>
+      <ul class="list" id="anprLog"></ul>
+    </div>
+    <div class="card">
+      <h3>巡更路線</h3>
+      <div class="row"><span>安保巡更</span><button class="btn" id="btnPatrol">開始/停止</button></div>
+      <div class="tiny">備註：巡更點包含商業街、Runway Bay、泊車區與碼頭步行連接。</div>
+    </div>
+  </div>
+
+  <div class="content" id="tab-esg" style="display:none">
+    <div class="grid kpi">
+      <div class="card">
+        <h3>IAQ 等級</h3>
+        <div class="metric" id="m-iaq">—</div>
+        <div class="muted">依據 EPD 室內空氣質素指引（模擬）</div>
+      </div>
+      <div class="card">
+        <h3>噪聲管制</h3>
+        <div class="metric" id="m-noise">OK</div>
+        <div class="muted">晚 11:00–翌日 07:00 靜音時段</div>
+      </div>
+      <div class="card">
+        <h3>垃圾清運</h3>
+        <div class="metric" id="m-waste">—%</div>
+        <div class="muted">回收占比</div>
+      </div>
+      <div class="card">
+        <h3>天氣信號</h3>
+        <div class="row" style="gap:6px; flex-wrap:wrap">
+          <button class="btn" data-signal="NORMAL">正常</button>
+          <button class="btn" data-signal="T1">T1</button>
+          <button class="btn" data-signal="T3">T3</button>
+          <button class="btn warn" data-signal="T8">T8</button>
+          <button class="btn warn" data-signal="T10">T10</button>
+          <button class="btn" data-signal="Amber">Amber</button>
+          <button class="btn" data-signal="Red">Red</button>
+          <button class="btn warn" data-signal="Black">Black</button>
+        </div>
+        <div class="tiny" style="margin-top:6px">信號改變將自動觸發應急提示與運營策略調整（示意）。</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="ticker">
+  <h4>ALERTS</h4>
+  <div class="marquee" id="marquee">[00:00] 系統初始化完成 · [00:10] 宿舍 A 棟電錶回傳正常 · [00:20] 商業街 CCTV #2 有遮擋 · [00:35] 泵房 P1 壓力恢復 · [00:40] 啟德體育園演出結束，預計 4.2 萬人散場</div>
+</div>
+<div class="legend">
+  <span class="chip"><span class="status-dot" style="background:var(--ok)"></span> 正常</span>
+  <span class="chip"><span class="status-dot" style="background:var(--warn)"></span> 預警</span>
+  <span class="chip"><span class="status-dot" style="background:var(--danger)"></span> 告警</span>
+</div>
+
+<div class="modal" id="modal">
+  <div class="box">
+    <div class="row" style="justify-content:space-between;align-items:center">
+      <h3 style="margin:0">設定</h3>
+      <button class="btn icon" id="btnCloseModal" title="關閉">✕</button>
+    </div>
+    <div class="divider"></div>
+    <div class="grid2">
+      <div>
+        <div class="tiny">Mapbox Access Token（已內置，可更改）</div>
+        <input class="input" id="token" placeholder="粘貼 Mapbox Token" />
+      </div>
+      <div>
+        <div class="tiny">3D Tiles（tileset.json）URL（可選）</div>
+        <input class="input" id="tilesUrl" placeholder="https://your-server/tileset.json" />
+      </div>
+    </div>
+    <div class="row" style="margin-top:10px; gap:8px">
+      <button class="btn primary" id="btnInit">重新初始化</button>
+      <button class="btn" id="btnLoadTiles">載入 3D Tiles</button>
+    </div>
+    <div class="tiny" style="margin-top:8px">備註：3D Tiles 為實驗性自定義圖層，請確保 CORS 與投影為 EPSG:3857。</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const BUILTIN_TOKEN = "pk.eyJ1IjoiY2hld2VpdGFvIiwiYSI6ImNsNDUzb3F4eDA3anozY3FsYzA1ZDh5eWQifQ.9Ti0_dLR6wN4WoUUvjwO_w";
+
+  let map, timers = {}, mapReady = false, weatherSignal = "NORMAL";
+  const ids = {
+    sensorsSrc:'sensors-src', sensorsLayer:'sensors-layer',
+    heatSrc:'heat-src', heatLayer:'heat-layer',
+    cctvSrc:'cctv-src', cctvLayer:'cctv-layer',
+    busSrc:'bus-src', busLayer:'bus-layer',
+    flowSrc:'flow-src', flowLayer:'flow-layer',
+    fenceSrc:'fence-src', fenceLayer:'fence-layer',
+    iaqSrc:'iaq-src', iaqLayer:'iaq-layer',
+    binsSrc:'bins-src', binsLayer:'bins-layer',
+    floodSrc:'flood-src', floodLayer:'flood-layer',
+    patrolSrc:'patrol-src', patrolLayer:'patrol-layer'
+  };
+
+  const PT_KAI_TAK_STN = [114.1994, 22.3304];
+  const PT_KTSP = [114.19733435248456, 22.322347899895064];
+  const PT_MALL2_TAXI = [114.2027, 22.3293];
+  const PT_RUNWAY1331 = [114.2128, 22.3074];
+
+  const rnd = (a,b)=> Math.random()*(b-a)+a;
+
+  function makeSensors(){ const pts=[]; const anchors=[PT_KTSP, PT_RUNWAY1331];
+    for(let i=0;i<72;i++){ const near=anchors[i%2];
+      pts.push({ type:'Feature', properties:{ id:'S'+(1000+i), type:['電錶','水錶','煙感','門禁'][i%4], status:(i%13===0)?'紅':(i%7===0)?'橙':'綠', val:Math.round(rnd(10,99)) },
+        geometry:{ type:'Point', coordinates:[ near[0]+rnd(-0.004,0.004), near[1]+rnd(-0.004,0.004) ] } });
+    }
+    return { type:'FeatureCollection', features: pts };
+  }
+  function makeCCTV(){ const cams=[]; [PT_KTSP, PT_MALL2_TAXI, PT_KAI_TAK_STN, PT_RUNWAY1331].forEach((a,idx)=>{
+    cams.push({ type:'Feature', properties:{ id:'CCTV'+idx, name:'CCTV #'+(idx+1), status:['紅','橙','綠'][idx%3], snapshot:'https://placehold.co/320x180?text=CCTV+'+(idx+1)},
+      geometry:{ type:'Point', coordinates:[ a[0]+rnd(-0.0015,0.0015), a[1]+rnd(-0.0015,0.0015) ] } });
+  }); return { type:'FeatureCollection', features: cams }; }
+  function makeHeat(n=400, spread=0.005){
+    return { type:'FeatureCollection', features:Array.from({length:n}).map(()=>({ type:'Feature', properties:{weight:Math.random()}, geometry:{ type:'Point', coordinates:[ PT_KTSP[0]+rnd(-spread,spread), PT_KTSP[1]+rnd(-spread,spread) ] }})) };
+  }
+  function makeIAQ(){ const pts=[]; const around=[PT_RUNWAY1331, PT_KTSP];
+    for(let i=0;i<30;i++){ const a=around[i%2]; const pm= Math.round(rnd(8, 70)); const co2 = Math.round(rnd(420, 1100));
+      pts.push({ type:'Feature', properties:{ pm25:pm, co2:co2, level: pm<35 && co2<800 ? '優' : (pm<55 && co2<1000 ? '良' : '一般') },
+        geometry:{ type:'Point', coordinates:[ a[0]+rnd(-0.003,0.003), a[1]+rnd(-0.003,0.003) ] }});
+    } return { type:'FeatureCollection', features: pts };
+  }
+  function makeBins(){ const pts=[]; [PT_RUNWAY1331, PT_KTSP].forEach(a=>{
+      for(let i=0;i<8;i++){ pts.push({ type:'Feature', properties:{ fill: Math.round(rnd(5,100)), type: i%3===0?'回收':'一般' }, geometry:{ type:'Point', coordinates:[ a[0]+rnd(-0.002,0.002), a[1]+rnd(-0.002,0.002) ] } }); }
+    }); return { type:'FeatureCollection', features: pts };
+  }
+  function makeFlood(){
+    return { type:'FeatureCollection', features:[{ type:'Feature', properties:{risk:'中-高'}, geometry:{ type:'Polygon', coordinates:[[ [114.2105,22.3111],[114.2157,22.3110],[114.2161,22.3061],[114.2120,22.3040],[114.2092,22.3086],[114.2105,22.3111] ]] } }] };
+  }
+  const routeToMTR = [ PT_KTSP, [114.2006,22.3297],[114.2001,22.3299], PT_KAI_TAK_STN ];
+  const routeToTaxi = [ PT_KTSP, [114.2021,22.3292], PT_MALL2_TAXI ];
+  const routeToRunway = [ PT_KTSP, [114.2055,22.3245],[114.2087,22.3180],[114.2128,22.3122], PT_RUNWAY1331 ];
+  const patrolRoute = [ [114.2126,22.3098],[114.2148,22.3099],[114.2154,22.3075],[114.2114,22.3057],[114.2100,22.3088],[114.2126,22.3098] ];
+
+  function interp(line,t){ const k=line.length-1; if(k<=0) return line[0]; const seg=1/k; const i=Math.min(k-1, Math.floor(t/seg)); const lt=(t-i*seg)/seg; const a=line[i], b=line[i+1]; return [a[0]+(b[0]-a[0])*lt, a[1]+(b[1]-a[1])*lt]; }
+  function buildFlow(audienceK){ const total=audienceK*1000; const nM=Math.round(total*0.6/55), nT=Math.round(total*0.25/55), nR=Math.round(total*0.15/55);
+    const mk=(n,p,s)=>Array.from({length:n}).map(()=>({type:'Feature',properties:{path:JSON.stringify(p),t:Math.random()*0.2,s:s+Math.random()*0.015},geometry:{type:'Point',coordinates:p[0]}}));
+    return { type:'FeatureCollection', features:[...mk(nM,routeToMTR,0.007),...mk(nT,routeToTaxi,0.009),...mk(nR,routeToRunway,0.006)]};
+  }
+  function stepFlow(fc){ fc.features.forEach(f=>{ let t=f.properties.t+f.properties.s; if(t>1) t=0; f.properties.t=t; f.geometry.coordinates=interp(JSON.parse(f.properties.path), t); }); }
+
+  const fence = { type:'FeatureCollection', features:[{ type:'Feature', properties:{ name:'Runway 1331 區域' }, geometry:{ type:'Polygon', coordinates:[[ [114.2095,22.3115],[114.2155,22.3115],[114.2165,22.3050],[114.2112,22.3030],[114.2089,22.3078],[114.2095,22.3115] ]] } }] };
+
+  function $(sel){ return document.querySelector(sel); }
+  function setText(id, txt){ const el=document.getElementById(id); if(el) el.textContent=txt; }
+  function pushTicker(msg){ const t=new Date(); const hh=String(t.getHours()).padStart(2,'0'); const mm=String(t.getMinutes()).padStart(2,'0'); const tag=`[${hh}:${mm}] ${msg} · `; const m=document.getElementById('marquee'); m.textContent=(m.textContent+' '+tag).slice(-800); }
+  function openModal(show=true){ $('#modal').style.display = show?'grid':'none'; }
+
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.addEventListener('click', ()=>{
+      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); t.classList.add('active');
+      const key=t.dataset.tab;
+      ['overview','ops','event','security','esg'].forEach(n=>{ const el=document.getElementById('tab-'+n); if(el) el.style.display = (n===key)?'block':'none'; });
+    });
+  });
+
+  $('#btnSettings').addEventListener('click', ()=>openModal(true));
+  $('#btnCloseModal').addEventListener('click', ()=>openModal(false));
+  $('#btnInit').addEventListener('click', initMap);
+  $('#btnLoadTiles').addEventListener('click', load3DTiles);
+  $('#btnStartAll').addEventListener('click', ()=>{
+    ensureReady();
+    ['chkSensors','chkCCTV','chkHeatmap','chkFence','chkIAQ','chkBins'].forEach(id=>{ const el=document.getElementById(id); if(el && !el.checked){ el.checked=true; el.dispatchEvent(new Event('change')); } });
+    toggleBus(true); document.getElementById('chkBus').checked=true;
+    toggleFlow(true); document.getElementById('chkFlow').checked=true;
+    togglePatrol(true); document.getElementById('chkPatrol').checked=true;
+  });
+  $('#btnConcert').addEventListener('click', ()=>{
+    ensureReady(); document.querySelector('[data-tab="event"]').click(); toggleFlow(true); toggleBus(true);
+  });
+  $('#btnTyphoon').addEventListener('click', ()=> setSignal('T8'));
+
+  $('#chkSensors').addEventListener('change', e=> setVisibility(ids.sensorsLayer, e.target.checked));
+  $('#chkHeatmap').addEventListener('change', e=> toggleHeat(e.target.checked));
+  $('#chkCCTV').addEventListener('change', e=> setVisibility(ids.cctvLayer, e.target.checked));
+  $('#chkBus').addEventListener('change', e=> toggleBus(e.target.checked));
+  $('#chkFlow').addEventListener('change', e=> toggleFlow(e.target.checked));
+  $('#chkFence').addEventListener('change', e=> { setVisibility(ids.fenceLayer, e.target.checked); setVisibility(ids.fenceLayer+'-line', e.target.checked); });
+  $('#chkIAQ').addEventListener('change', e=> setVisibility(ids.iaqLayer, e.target.checked));
+  $('#chkBins').addEventListener('change', e=> setVisibility(ids.binsLayer, e.target.checked));
+  $('#chkFlood').addEventListener('change', e=> setVisibility(ids.floodLayer, e.target.checked));
+  $('#chkPatrol').addEventListener('change', e=> togglePatrol(e.target.checked));
+
+  $('#audience').addEventListener('input', e=> setText('audVal', e.target.value+'k'));
+  $('#btnStartFlow').addEventListener('click', ()=>toggleFlow(true));
+  $('#btnStopFlow').addEventListener('click', ()=>toggleFlow(false));
+  $('#btnBus').addEventListener('click', ()=>{ const on=!timers.bus; toggleBus(on); });
+
+  $('#btnOpenGate').addEventListener('click', ()=>{ setText('m-gate','OPEN'); pushTicker('車閘已打開。'); });
+  $('#btnCloseGate').addEventListener('click', ()=>{ setText('m-gate','CLOSED'); pushTicker('車閘已關閉。'); });
+  $('#btnPatrol').addEventListener('click', ()=>{ const on=!timers.patrol; togglePatrol(on); });
+
+  document.querySelectorAll('#tab-esg [data-signal]').forEach(btn=> btn.addEventListener('click', ()=> setSignal(btn.dataset.signal)) );
+
+  function startKPIs(){
+    if(timers.kpi) return;
+    const el = ()=> Math.round(rnd(2200, 5200));
+    const wa = ()=> Math.round(rnd(120, 480));
+    const pk = ()=> Math.round(rnd(18, 88));
+    const cf = ()=> Math.round(rnd(78, 98));
+    const inF = ()=> Math.round(rnd(6, 18));
+    const outF = ()=> Math.round(rnd(5, 16));
+    timers.kpi = setInterval(()=>{
+      const e=el(), w=wa(), p=pk(), c=cf();
+      setText('m-elec', e+' kWh'); setText('m-water', w+' m³'); setText('m-parking', p+'%'); setText('m-comfort', c);
+      document.getElementById('b-elec').style.width=Math.min(100,e/5200*100)+'%';
+      document.getElementById('b-water').style.width=Math.min(100,w/480*100)+'%';
+      setText('v-elec', e+' kWh'); setText('v-water', w+' m³');
+      setText('m-in', inF()); setText('m-out', outF());
+      if(Math.random()>0.6) addANPRLog();
+      simLifts();
+      setText('m-waste', Math.round(rnd(28,52))+'%');
+      setText('m-iaq', ['Excellent','Good','Acceptable'][Math.floor(rnd(0,2.99))]);
+    }, 2200);
+  }
+
+  function addANPRLog(){
+    const plate = ['XX','HK','VR','CN'][Math.floor(rnd(0,3.99))] + '-' + Math.floor(rnd(1000,9999));
+    const li = document.createElement('li'); li.textContent = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) + ' 進場：' + plate;
+    const log = document.getElementById('anprLog'); log.prepend(li); while(log.children.length>6) log.removeChild(log.lastChild);
+  }
+
+  function simLifts(){
+    const set = (id, floor, dir)=>{ setText(id, (floor===0?'GF':floor+'F') + ' ' + (dir||'—')); };
+    for(let i=1;i<=6;i++){
+      let floor = Math.round(rnd(0,18));
+      let dir = ['↑','↓','—'][Math.floor(rnd(0,2.99))];
+      if(i===4){ floor=0; dir='—'; }
+      set('lift'+i, floor, dir);
+    }
+  }
+
+  function ensureReady(){ if(!mapReady){ alert('地圖尚未初始化。'); throw new Error('map not ready'); } }
+
+  function initMap(){
+    const token = (document.getElementById('token').value.trim() || BUILTIN_TOKEN);
+    mapboxgl.accessToken = token;
+    map = new mapboxgl.Map({
+      container: 'map', style: 'mapbox://styles/mapbox/standard',
+      center: PT_KTSP, zoom: 14.8, pitch: 68, bearing: -18, projection:'globe', antialias: true
+    });
+    map.addControl(new mapboxgl.NavigationControl());
+    map.addControl(new mapboxgl.FullscreenControl());
+    map.addControl(new mapboxgl.GeolocateControl({ positionOptions:{enableHighAccuracy:true}, trackUserLocation:true }));
+    map.on('style.load', ()=>{
+      map.setFog({});
+      map.addSource('mapbox-dem', { type:'raster-dem', url:'mapbox://mapbox.mapbox-terrain-dem-v1', tileSize:512 });
+      map.setTerrain({ source:'mapbox-dem', exaggeration:1.0 });
+
+      addLandmarks();
+
+      map.addSource(ids.sensorsSrc, { type:'geojson', data: makeSensors() });
+      map.addLayer({ id: ids.sensorsLayer, type:'circle', source: ids.sensorsSrc,
+        paint:{ 'circle-radius':6, 'circle-color':[ 'match', ['get','status'], '紅','#ef4444','橙','#f59e0b','#22c55e' ], 'circle-stroke-color':'#0b0d12', 'circle-stroke-width':1 } });
+
+      map.addSource(ids.cctvSrc, { type:'geojson', data: makeCCTV() });
+      map.addLayer({ id: ids.cctvLayer, type:'symbol', source: ids.cctvSrc, layout:{ 'icon-image':'camera-15','icon-size':1.1,'text-field':['get','name'],'text-offset':[0,1.1],'text-size':11,'text-anchor':'top' },
+        paint:{ 'text-halo-color':'#0b0d12', 'text-halo-width':1.2, 'text-color':'#e5e7eb' } });
+
+      map.addSource(ids.heatSrc, { type:'geojson', data: makeHeat() });
+      map.addLayer({ id: ids.heatLayer, type:'heatmap', source: ids.heatSrc, layout:{ 'visibility':'none' },
+        paint:{ 'heatmap-intensity':1.1,'heatmap-weight':['coalesce',['get','weight'],0.5],'heatmap-radius':['interpolate',['linear'],['zoom'],10,24,16,42],'heatmap-opacity':0.85,
+        'heatmap-color':[ 'interpolate',['linear'],['heatmap-density'], 0,'rgba(0,0,255,0)', 0.2,'rgba(0,128,255,0.7)', 0.4,'rgba(0,255,255,0.8)', 0.6,'rgba(0,255,0,0.85)', 0.8,'rgba(255,255,0,0.9)', 1,'rgba(255,0,0,0.95)' ] } }, ids.sensorsLayer);
+
+      map.addSource(ids.busSrc, { type:'geojson', data:{ type:'FeatureCollection', features:[] } });
+      map.addLayer({ id: ids.busLayer, type:'symbol', source: ids.busSrc, layout:{ 'icon-image':'bus-15','icon-size':1.2,'text-field':'Shuttle','text-offset':[0,1.2],'text-size':11 },
+        paint:{ 'text-halo-color':'#0b0d12','text-halo-width':1.2,'text-color':'#e5e7eb' } });
+
+      map.addSource(ids.flowSrc, { type:'geojson', data:{ type:'FeatureCollection', features:[] } });
+      map.addLayer({ id: ids.flowLayer, type:'circle', source: ids.flowSrc, layout:{ 'visibility':'none' },
+        paint:{ 'circle-radius':3.2,'circle-color':'#111827','circle-stroke-width':1.2,'circle-stroke-color':'#f59e0b' } });
+
+      map.addSource(ids.iaqSrc, { type:'geojson', data: makeIAQ() });
+      map.addLayer({ id: ids.iaqLayer, type:'circle', source: ids.iaqSrc, layout:{ 'visibility':'none' },
+        paint:{
+          'circle-radius': ['interpolate',['linear'],['get','pm25'], 0,6, 80,12 ],
+          'circle-color': [ 'match', ['get','level'], '優', '#22c55e', '良', '#f59e0b', '#ef4444' ],
+          'circle-stroke-color':'#0b0d12','circle-stroke-width':1 } });
+
+      map.addSource(ids.binsSrc, { type:'geojson', data: makeBins() });
+      map.addLayer({ id: ids.binsLayer, type:'symbol', source: ids.binsSrc, layout:{ 'icon-image':'waste-basket-15','icon-size':1.2,'text-field':['to-string',['get','fill']],'text-offset':[0,1.1],'text-size':11,'text-anchor':'top' },
+        paint:{ 'text-halo-color':'#0b0d12','text-halo-width':1.2,'text-color':'#e5e7eb' } });
+
+      map.addSource(ids.floodSrc, { type:'geojson', data: makeFlood() });
+      map.addLayer({ id: ids.floodLayer, type:'fill', source: ids.floodSrc, layout:{ 'visibility':'none' },
+        paint:{ 'fill-color':'#38bdf8', 'fill-opacity':0.18 } });
+
+      map.addSource(ids.fenceSrc, { type:'geojson', data: fence });
+      map.addLayer({ id: ids.fenceLayer, type:'fill', source: ids.fenceSrc, paint:{ 'fill-color':'#22d3ee', 'fill-opacity':0.12 } });
+      map.addLayer({ id: ids.fenceLayer+'-line', type:'line', source: ids.fenceSrc, paint:{ 'line-color':'#22d3ee', 'line-width':2 } });
+
+      map.addSource(ids.patrolSrc, { type:'geojson', data:{ type:'FeatureCollection', features:[] } });
+      map.addLayer({ id: ids.patrolLayer, type:'symbol', source: ids.patrolSrc, layout:{ 'icon-image':'police-15','text-field':'Guard','text-offset':[0,1.2],'text-size':11 },
+        paint:{ 'text-halo-color':'#0b0d12','text-halo-width':1.2,'text-color':'#e5e7eb' } });
+
+      map.on('click', ids.cctvLayer, e=>{ const p=e.features[0].properties;
+        new mapboxgl.Popup().setLngLat(e.lngLat).setHTML(`<b>${p.name}</b><br>狀態：${p.status}<br><img src="${p.snapshot}" width="240" height="135" style="border-radius:8px;margin-top:6px;object-fit:cover" />`).addTo(map);
+      });
+      map.on('click', ids.sensorsLayer, e=>{ const p=e.features[0].properties;
+        new mapboxgl.Popup().setLngLat(e.lngLat).setHTML(`<b>${p.type}</b>（${p.id}）<br>狀態：${p.status}<br>數值：${p.val}`).addTo(map);
+      });
+      map.on('click', ids.iaqLayer, e=>{ const p=e.features[0].properties; new mapboxgl.Popup().setLngLat(e.lngLat).setHTML(`PM2.5：${p.pm25}<br>CO₂：${p.co2}<br>等級：${p.level}`).addTo(map); });
+      map.on('click', ids.binsLayer, e=>{ const p=e.features[0].properties; new mapboxgl.Popup().setLngLat(e.lngLat).setHTML(`垃圾桶：${p.type}<br>填充：${p.fill}%<br>預計清運：${Math.round(rnd(10,60))} 分鐘內`).addTo(map); });
+
+      mapReady = true;
+      startKPIs();
+      pushTicker('地圖初始化完成（HK+ 功能已載入）。');
+    });
+  }
+
+  function addLandmarks(){
+    new mapboxgl.Marker({color:'#0ea5e9'}).setLngLat(PT_KAI_TAK_STN).setPopup(new mapboxgl.Popup().setText('啟德站（MTR）')).addTo(map);
+    new mapboxgl.Marker({color:'#ef4444'}).setLngLat(PT_KTSP).setPopup(new mapboxgl.Popup().setText('啟德體育園')).addTo(map);
+    new mapboxgl.Marker({color:'#22c55e'}).setLngLat(PT_MALL2_TAXI).setPopup(new mapboxgl.Popup().setText('Mall 2 出租車/車場')).addTo(map);
+    new mapboxgl.Marker({color:'#9333ea'}).setLngLat(PT_RUNWAY1331).setPopup(new mapboxgl.Popup().setText('Runway 1331')).addTo(map);
+  }
+
+  function load3DTiles(){
+    ensureReady();
+    if (!window.Mapbox3DTiles){ alert('未檢測到 3D Tiles 插件。'); return; }
+    const url = document.getElementById('tilesUrl').value.trim(); if(!url){ alert('請輸入 tileset.json URL'); return; }
+    const layerId = 'r1331-3dtiles';
+    try{
+      const layer = new Mapbox3DTiles.Mapbox3DTilesLayer({ id: layerId, url, maximumScreenSpaceError: 16 });
+      if(map.getLayer(layerId)) map.removeLayer(layerId);
+      map.addLayer(layer, ids.sensorsLayer);
+      pushTicker('已嘗試載入 3D Tiles。若未顯示，請檢查投影/CORS/資源路徑。');
+    }catch(err){ console.error(err); alert('載入 3D Tiles 失敗：'+err.message); }
+  }
+
+  function setVisibility(layerId, show){
+    if(!map || !map.getLayer(layerId)) return;
+    map.setLayoutProperty(layerId, 'visibility', show ? 'visible':'none');
+  }
+
+  function toggleHeat(on){
+    setVisibility(ids.heatLayer, on);
+    if(on && !timers.heat){ timers.heat=setInterval(()=>{ map.getSource(ids.heatSrc)?.setData(makeHeat()); },1500); }
+    else if(!on && timers.heat){ clearInterval(timers.heat); timers.heat=null; }
+  }
+  function toggleBus(on){
+    if(on){
+      if(timers.bus) return;
+      const path=[PT_KAI_TAK_STN, PT_KTSP, PT_RUNWAY1331];
+      let t=0, dir=1;
+      const feature={ type:'Feature', properties:{}, geometry:{type:'Point', coordinates:path[0]} };
+      const fc={ type:'FeatureCollection', features:[feature] }; const src=map.getSource(ids.busSrc); src.setData(fc);
+      timers.bus=setInterval(()=>{ t+=0.01*dir; if(t>=1||t<=0) dir*=-1; feature.geometry.coordinates=interp(path,t); src.setData(fc);
+        setText('m-mtr', Math.round(120 + 120*t)); setText('m-taxi', Math.round(60 + 90*(1-t))); },120);
+    }else{ if(timers.bus){ clearInterval(timers.bus); timers.bus=null; } map.getSource(ids.busSrc)?.setData({type:'FeatureCollection',features:[]}); }
+  }
+  function toggleFlow(on){
+    if(on){ setVisibility(ids.flowLayer,true); if(timers.flow) return;
+      const k=parseInt(document.getElementById('audience').value,10); const fc=buildFlow(k); const src=map.getSource(ids.flowSrc); src.setData(fc);
+      timers.flow=setInterval(()=>{ stepFlow(fc); src.setData(fc); const total=k*1000; setText('m-rwy', Math.round(total*0.15*(Math.random()*0.15+0.85))); setText('m-eta', (30 + Math.round(Math.random()*10))); },120);
+      pushTicker('演唱會散場模擬已啟動。');
+    }else{ setVisibility(ids.flowLayer,false); if(timers.flow){ clearInterval(timers.flow); timers.flow=null; } pushTicker('演唱會散場模擬已停止。'); }
+  }
+  function togglePatrol(on){
+    if(on){ if(timers.patrol) return; let t=0; const feature={ type:'Feature', properties:{}, geometry:{ type:'Point', coordinates:patrolRoute[0] } };
+      const fc={ type:'FeatureCollection', features:[feature] }; const src=map.getSource(ids.patrolSrc); src.setData(fc);
+      timers.patrol=setInterval(()=>{ t+=0.01; if(t>1) t=0; feature.geometry.coordinates=interp(patrolRoute,t); src.setData(fc); },160);
+      pushTicker('安保巡更已啟動。');
+    }else{ if(timers.patrol){ clearInterval(timers.patrol); timers.patrol=null; } map.getSource(ids.patrolSrc)?.setData({type:'FeatureCollection',features:[]}); pushTicker('安保巡更已停止。'); }
+  }
+
+  function setSignal(sig){
+    weatherSignal = sig;
+    const chip = document.getElementById('dot-signal');
+    const label = document.getElementById('signal-label');
+    let color = '#22d3ee', txt = 'HKO：正常';
+    if(sig==='T1'){ color='#38bdf8'; txt='HKO：T1'; }
+    else if(sig==='T3'){ color='#22c55e'; txt='HKO：T3'; }
+    else if(sig==='T8'){ color='#f59e0b'; txt='HKO：T8（停工停課）'; }
+    else if(sig==='T10'){ color='#ef4444'; txt='HKO：T10'; }
+    else if(sig==='Amber'){ color='#f59e0b'; txt='HKO：雷暴 ∙ Amber Rain'; }
+    else if(sig==='Red'){ color='#ef4444'; txt='HKO：Red Rain'; }
+    else if(sig==='Black'){ color='#111827'; txt='HKO：Black Rain'; }
+    chip.style.background=color; label.textContent=txt;
+    pushTicker('天氣信號切換：'+txt);
+    if(['T8','T10','Black'].includes(sig)){
+      toggleFlow(false); document.getElementById('chkFlow').checked=false;
+      toggleBus(false); document.getElementById('chkBus').checked=false;
+      setVisibility(ids.floodLayer, true); document.getElementById('chkFlood').checked=true;
+      pushTicker('自動應急：已關閉活動聯動，顯示內澇風險。');
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', ()=>{
+    const tokenInput=document.getElementById('token'); if(tokenInput) tokenInput.value=BUILTIN_TOKEN; initMap(); startKPIs();
+  });
+
+})();</script>
+</body>
+</html>
