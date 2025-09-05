@@ -1,14 +1,13 @@
 import { useEffect } from 'react';
-import { TrendingUp, TrendingDown, Users, Zap, Thermometer, Droplets, Wind, AlertTriangle } from 'lucide-react';
-import { useKPIStore, useSystemStore, useAlertStore, useSimulationStore, useKPIRealtime, useRealtimeStore } from '../../store';
+import { TrendingUp, TrendingDown, Users, Zap, Droplets, Wind, AlertTriangle } from 'lucide-react';
+import { useKPIStore, useAlertStore, useSimulationStore, useKPIRealtime, useRealtimeStore } from '../../store';
 
 export default function OverviewTab() {
   const { kpiData } = useKPIStore();
-  const { systemStatus } = useSystemStore();
   const { alerts } = useAlertStore();
-  const { startSimulation, stopSimulation, isSimulationRunning } = useSimulationStore();
+  const { startSimulation, isSimulationRunning } = useSimulationStore();
   const { kpiData: realtimeKPIData, lastUpdate } = useKPIRealtime();
-  const { startRealtime, stopRealtime, isSimulationRunning: isRealtimeRunning } = useRealtimeStore();
+  const { startRealtime, isSimulationRunning: isRealtimeRunning } = useRealtimeStore();
 
   // 使用实时KPI数据，如果没有则回退到静态数据
   const currentKPIData = realtimeKPIData || kpiData;
@@ -127,7 +126,7 @@ export default function OverviewTab() {
               </div>
             </div>
             <div className="flex items-baseline space-x-2">
-              <span className="text-2xl font-bold text-white">{kpi.value}</span>
+              <span className="text-2xl font-bold text-gray-900 dark:text-white">{kpi.value}</span>
               <span className="text-sm text-gray-400">{kpi.unit}</span>
             </div>
             {kpi.change !== '0%' && (
