@@ -20,8 +20,8 @@ export default function Home() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [mapReady, setMapReady] = useState(false);
   const [showPerformancePanel, setShowPerformancePanel] = useState(false);
-  const [showStabilityPanel, setShowStabilityPanel] = useState(false);
-  const [showLongRunningTestPanel, setShowLongRunningTestPanel] = useState(false);
+  const [showStabilityPanel] = useState(false);
+  const [showLongRunningTestPanel] = useState(false);
   const [showMemoryTestPanel, setShowMemoryTestPanel] = useState(false);
   const { addLoadingTask, removeLoadingTask } = useLoadingStore();
   const { showFeedback } = useFeedbackStore();
@@ -122,34 +122,6 @@ export default function Home() {
         {showMemoryTestPanel && (
           <MemoryManagementTestPanel onClose={() => setShowMemoryTestPanel(false)} />
         )}
-
-
-
-      {/* 控制面板按钮组 */}
-      <div className="fixed top-20 right-4 z-50 flex flex-col gap-2">
-        {/* 性能面板切换按钮 */}
-        <button
-          onClick={() => setShowPerformancePanel(!showPerformancePanel)}
-          className="bg-gray-800/80 backdrop-blur-sm text-white p-2 rounded-lg shadow-lg hover:bg-gray-700/80 transition-colors"
-          title="性能监控"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-          </svg>
-        </button>
-        
-        {/* 稳定性测试面板切换按钮 */}
-        <button
-          onClick={() => setShowStabilityPanel(!showStabilityPanel)}
-          className="bg-gray-800/80 backdrop-blur-sm text-white p-2 rounded-lg shadow-lg hover:bg-gray-700/80 transition-colors"
-          title="稳定性测试"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-          </svg>
-        </button>
-
-      </div>
     </div>
   );
 }

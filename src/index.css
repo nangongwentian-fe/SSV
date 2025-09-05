@@ -237,3 +237,68 @@ input[type="range"] {
 .animate-pulse-slow {
   animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+/* Mapbox 控件位置调整 */
+.mapboxgl-control-container {
+  position: absolute !important;
+  top: 80px !important; /* TopBar高度约70px + 10px间距 */
+  left: 16px !important;
+  right: auto !important;
+  z-index: 30 !important;
+}
+
+/* 调整各个控件的位置 */
+.mapboxgl-ctrl-top-left {
+  top: 0 !important;
+  left: 0 !important;
+}
+
+.mapboxgl-ctrl-top-right {
+  top: 0 !important;
+  right: auto !important;
+  left: 0 !important;
+  margin-top: 120px !important; /* 给导航控件留出空间 */
+}
+
+/* 确保控件不会被TopBar遮挡 */
+.mapboxgl-ctrl {
+  margin: 4px !important;
+}
+
+/* 调整控件按钮样式以适应新位置 */
+.mapboxgl-ctrl button {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(4px) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* 深色主题下的控件样式 */
+.dark .mapboxgl-ctrl button {
+  background-color: rgba(31, 41, 55, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+/* 深色主题下的控件图标颜色修复 */
+.dark .mapboxgl-ctrl-icon {
+  filter: invert(1) !important;
+}
+
+.dark .mapboxgl-ctrl-zoom-in .mapboxgl-ctrl-icon,
+.dark .mapboxgl-ctrl-zoom-out .mapboxgl-ctrl-icon,
+.dark .mapboxgl-ctrl-fullscreen .mapboxgl-ctrl-icon,
+.dark .mapboxgl-ctrl-shrink .mapboxgl-ctrl-icon,
+.dark .mapboxgl-ctrl-geolocate .mapboxgl-ctrl-icon {
+  filter: invert(1) brightness(0) saturate(100%) invert(100%) !important;
+}
+
+/* 确保悬停状态下图标颜色正确 */
+.dark .mapboxgl-ctrl button:hover .mapboxgl-ctrl-icon {
+  filter: invert(1) brightness(0) saturate(100%) invert(85%) !important;
+}
+
+/* 活跃状态下的图标颜色 */
+.dark .mapboxgl-ctrl button:active .mapboxgl-ctrl-icon {
+  filter: invert(1) brightness(0) saturate(100%) invert(70%) !important;
+}
