@@ -129,7 +129,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ onMapReady }) => {
         mapboxgl.accessToken = token;
 
         // 尝试使用Mapbox样式
-        let mapStyle: string | any = 'mapbox://styles/mapbox/streets-v12';
+        let mapStyle: string | any = 'mapbox://styles/mapbox/standard';
         let useMapbox = true;
 
         // 测试token是否有效
