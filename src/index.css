@@ -302,3 +302,8 @@ input[type="range"] {
 .dark .mapboxgl-ctrl button:active .mapboxgl-ctrl-icon {
   filter: invert(1) brightness(0) saturate(100%) invert(70%) !important;
 }
+
+/* 隐藏 Mapbox Logo */
+.mapboxgl-ctrl-logo {
+  display: none !important;
+}
